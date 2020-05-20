@@ -1,0 +1,51 @@
+\documentclass{report}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{color}
+%% \usepackage{showframe}
+\usepackage[margin=1cm]{geometry}
+\usepackage{titlesec}
+
+
+\renewcommand{\chaptername}{Module}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{WT \thesection}{1em}{}
+
+\usepackage[titles]{tocloft}
+\renewcommand{\cftsecpresnum}{WT\space}
+\newlength\mylength
+\settowidth\mylength{\cftsecpresnum}
+\addtolength\cftsecnumwidth{\mylength}
+
+\setcounter{secnumdepth}{1} % only chapter and sections will be numbered
+\setcounter{tocdepth}{3}    % entries down to \subsubsections in the TOC
+
+\lstdefinelanguage{dw}{
+  morekeywords={
+    do,or,and,map,mapObject,import,do,sizeOf,typeOf,output,payload,groupBy
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/}
+}
+
+
+
+\begin{document}
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+%% \listoffigures
+%% \newpage
+\pagenumbering{arabic}
+
+\include{./tex/module1}
+\include{./tex/module2}
+\include{./tex/module3}
+\include{./tex/module4}
+\include{./tex/module5}
+\include{./tex/module6}
+\include{./tex/module7}
+
+\end{document}
