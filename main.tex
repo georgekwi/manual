@@ -1,25 +1,36 @@
 \documentclass{report}
-\usepackage{listings}
 \usepackage{graphicx}
 \usepackage{color}
 %% \usepackage{showframe}
 \usepackage[margin=1cm]{geometry}
-\usepackage{titlesec}
-
 
 \renewcommand{\chaptername}{Module}
+\renewcommand{\thesection}{WT~\arabic{chapter}-\arabic{section}}
 
-\titleformat{\section}{\normalfont\Large\bfseries}{WT \thesection}{1em}{}
 
-\usepackage[titles]{tocloft}
-\renewcommand{\cftsecpresnum}{WT\space}
-\newlength\mylength
-\settowidth\mylength{\cftsecpresnum}
-\addtolength\cftsecnumwidth{\mylength}
+%% \usepackage{titlesec}
+%% \titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+%% \titleformat{\subsection}{\normalfont\large\bfseries}{}{1em}{}
+
+%% \usepackage{titletoc}
+%% \titlecontents{section}
+%%               [5em] % ie, 1.5em (chapter) + 2.3em
+%%               {}
+%%               {\contentslabel{2.3em}}
+%%               {\hspace*{-2.3em}}
+%%               {\titlerule*[1pc]{.}\contentspage}
+
+%% \usepackage[titles]{tocloft}
+%% \renewcommand{\cftsecpresnum}{WT\space}
+%% \newlength\mylength
+%% \settowidth\mylength{\cftsecpresnum}
+%% \addtolength\cftsecnumwidth{\mylength}
+
 
 \setcounter{secnumdepth}{1} % only chapter and sections will be numbered
-\setcounter{tocdepth}{3}    % entries down to \subsubsections in the TOC
+%% \setcounter{tocdepth}{3}    % entries down to \subsubsections in the TOC
 
+\usepackage{listings}
 \lstdefinelanguage{dw}{
   morekeywords={
     do,or,and,map,mapObject,import,do,sizeOf,typeOf,output,payload,groupBy
