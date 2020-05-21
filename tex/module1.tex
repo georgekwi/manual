@@ -1,9 +1,84 @@
 \chapter{Fundamentals -- Review++}
-
+%%
+%%
+%%
 \section{Import a basic Mule project into Anypoint Studio}
-
+%%%%%%
 \subsection{Import the starter project}
+\begin{enumerate}
+\item Start Anypoint Studio
+\item Create a new workspace
+\item Import the \texttt{apdw2-flights-starter.jar} project under the \texttt{studentFiles/mod01}
+\end{enumerate}
+%%%%%%
+\subsection{Create new project}
+\begin{enumerate}[resume*]
+\item Create a new project
+  \newline
+  \emph{
+    Creating a new project and copying only the files you minimally need for the class helps in containing the ``noise'' that is introduced with starter project.  Additionally, there is the extra benefit of not having to deal with students who are having compilation issues with the starter project.
+  }
+\item Create a new project and call it dataweave
+\item From the apdw2-flights-starter copy the following files over to the new project:
+  \begin{enumerate}
+  \item \texttt{/main/resources/airportInfoTiny.csv} to \texttt{src/main/resources}
+  \item \texttt{src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \texttt{src/test/resources}
+  \item \texttt{src/test/resources/flight-example.json} to \texttt{src/test/resources}
+  \end{enumerate}
+\end{enumerate}
 
-\subsection{Create a new project}
-
+%%
+%%
+%%
 \section{Fundamentals review++}
+\emph{
+  In this WT the goal is to attempt (I am saying attempt because often enough we have participants who don’t meet the prerequisites) to bring everyone at the same level by (1) reviewing fundamentals and (2) illustrating features of DW that we will be using throughout the class
+}
+
+%%%%%%
+\subsection{Create the flow, set the metadata}
+\begin{enumerate}
+\item Rename the \texttt{dataweave.xml} to \texttt{mod1.xml}
+\item Create a new flow named \texttt{mod1-review++}
+  \newline
+  \emph{
+    The reason for prefixing the flow name with the name of the flow is a best-practice one.
+    Such a convention will improve the readability of your flows by identifying the
+    Mule Configuration file a flow is defined under by just looking at a Flow Reference's
+    display name.
+  }
+\item Drop a DW (aka \texttt{Transform Message}) to the process area of the flow
+\item Define the payload input metadata to the \texttt{src/test/resources/flight-example.json},
+  set the name of the type to \texttt{flight\_json}
+\item Edit the sample data
+\item Turn on the preview
+\item Change the output to JSON
+\end{enumerate}
+
+%%%%%%
+\subsection{Construction}
+
+%%%%%%
+\subsection{Field access}
+
+%%%%%%
+\subsection{String concatenation}
+
+%%%%%%
+\subsection{Expression chaining}
+
+%%%%%%
+\subsection{Conditional expressions}
+
+%%%%%%
+\subsection{Array access and Ranges}
+
+%%%%%%
+\subsection{Common functions we will be using}
+
+%%%%%%
+\subsection{Transform XML to JSON}
+
+%%%%%%
+\subsection{Transform JSON to XML}
+

@@ -1,4 +1,5 @@
 \documentclass{report}
+\usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{color}
 %% \usepackage{showframe}
@@ -7,28 +8,10 @@
 \renewcommand{\chaptername}{Module}
 \renewcommand{\thesection}{WT~\arabic{chapter}-\arabic{section}}
 
-
-%% \usepackage{titlesec}
-%% \titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
-%% \titleformat{\subsection}{\normalfont\large\bfseries}{}{1em}{}
-
-%% \usepackage{titletoc}
-%% \titlecontents{section}
-%%               [5em] % ie, 1.5em (chapter) + 2.3em
-%%               {}
-%%               {\contentslabel{2.3em}}
-%%               {\hspace*{-2.3em}}
-%%               {\titlerule*[1pc]{.}\contentspage}
-
-%% \usepackage[titles]{tocloft}
-%% \renewcommand{\cftsecpresnum}{WT\space}
-%% \newlength\mylength
-%% \settowidth\mylength{\cftsecpresnum}
-%% \addtolength\cftsecnumwidth{\mylength}
-
+\usepackage{tocloft}
+\renewcommand\cftsecnumwidth{4em}
 
 \setcounter{secnumdepth}{1} % only chapter and sections will be numbered
-%% \setcounter{tocdepth}{3}    % entries down to \subsubsections in the TOC
 
 \usepackage{listings}
 \lstdefinelanguage{dw}{
