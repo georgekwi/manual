@@ -21,7 +21,7 @@
 \item Create a new project and call it dataweave
 \item From the apdw2-flights-starter copy the following files over to the new project:
   \begin{enumerate}
-  \item \texttt{/main/resources/airportInfoTiny.csv} to \texttt{src/main/resources}
+  \item \texttt{src/main/resources/airportInfoTiny.csv} to \texttt{src/main/resources}
   \item \texttt{src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \texttt{src/test/resources}
   \item \texttt{src/test/resources/flight-example.json} to \texttt{src/test/resources}
   \end{enumerate}
@@ -57,24 +57,133 @@
 
 %%%%%%
 \subsection{Construction}
+\begin{enumerate}[resume*]
+\item What are the semantics of \texttt{\{\}} in DW?
+  \begin{enumerate}
+  \item Object creation
+  \end{enumerate}
+\item What are the semantics of \texttt{[]} in DW?
+  \begin{enumerate}
+  \item Array creation
+  \end{enumerate}
+\end{enumerate}
 
 %%%%%%
-\subsection{Field access}
+\subsection{Fields}
+\begin{enumerate}[resume*]
+\item Three different ways of accessing the field \texttt{airline}
+  out of the \texttt{payload}. What are they?
+  \begin{enumerate}
+  \item \texttt{payload.airline}
+  \item \texttt{payload["airline"]}
+  \item \texttt{payload[0]}
+  \end{enumerate}
+  \emph{Let me let you in a secret: Objects internally are represented as arrays—field access is a façade}
+\item Why DW stores objects as arrays?
+  \begin{enumerate}
+  \item Because DW is the only language I know of that allows the creation of objects with
+    duplicate field names...
+    \begin{lstlisting}
+      {
+        a: 1,
+        a: 2,
+        a: 3
+      }
+    \end{lstlisting}
+    ... and the only way I can access the second and third field is through an index access.
+    But now we have more questions that need to be answered.
+  \item Why would a language allow for such a feature?  That is duplicate fields within an object.
+    \begin{enumerate}
+    \item Because of XML, how else you expect to be able to generate XML with tags that repeat:
+      \begin{lstlisting}
+        %dw 2.0
+        output application/xml
+        ---
+        "as": {
+	  a: 1,
+	  a: 2,
+	  a: 3
+        }        
+      \end{lstlisting}
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
 
 %%%%%%
 \subsection{String concatenation}
-
-%%%%%%
-\subsection{Expression chaining}
+\begin{enumerate}[resume*]
+\item Two ways to concatenate strings
+  \begin{enumerate}
+  \item \texttt{"The flight is operated by " ++ payload.airline}
+  \item \texttt{"The flight is operated by \$\{payload.airline\}"}
+  \end{enumerate}
+\item You have to be careful that the expression inside the \texttt{\$\{\}} returns
+  a string, otherwise you will be getting type missmatch errors.
+\end{enumerate}
 
 %%%%%%
 \subsection{Conditional expressions}
-
+\begin{enumerate}[resume*]
+\item \texttt{if then else} conditional
+  \begin{enumerate}
+  \item \texttt{if (true) 1 else 0}
+  \item \texttt{if (false) 1 else 0}
+  \end{enumerate}
+\item Nullity conditional
+  \begin{enumerate}
+  \item lstinline{null default "Other value"}
+  \item lstinline{"The value" default "Other value"}
+  \end{enumerate}
+\item Conditional elements
+  \begin{enumerate}
+  \item Objects
+    \begin{lstlisting}
+      {
+        a: 1,
+        (b: 2) if (true),
+        (c: 3) if (false)
+      }
+    \end{lstlisting}
+  \item Arrays
+    \begin{lstlisting}
+      [
+        1, 
+        (2) if (true),
+        (3) if (false)
+      ]
+    \end{lstlisting}
+  \end{enumerate}
+\end{enumerate}
 %%%%%%
 \subsection{Array access and Ranges}
+\begin{enumerate}[resume*]
+\item Array access
+  \begin{enumerate}
+  \item \texttt{[2,6,4,1,7][0]} evaluates to \texttt{2}
+  \item \texttt{[2,6,4,1,7][-1]} evaluates to \texttt{7}
+  \end{enumerate}
+\item Ranges
+  \begin{enumerate}
+  \item \texttt{0 to 5} evaluates to the \texttt{[0,1,2,3,4,5]} array 
+  \item \texttt{5 to 0} evaluates to the \texttt{[5,4,3,2,1,0]} array
+  \end{enumerate}
+\item Ranges, Arrays, and Strings
+  \begin{enumerate}
+  \item \texttt{[2,6,4,1,7][1 to -2]} evaluates to the \texttt{[6,4,1,7]} sub-array
+  \item \texttt{[2,6,4,1,7][-1 to 0} reverses the array
+  \item \texttt{payload.airline[-3 to -1]} evaluates to the last characters in the string
+  \item \texttt{payload.airline[-1 to 0]} reverses the string
+  \end{enumerate}
+\end{enumerate}
 
 %%%%%%
-\subsection{Common functions we will be using}
+\subsection{Common functions}
+\begin{enumerate}[resume*]
+\item 
+\end{enumerate}
+
+%%%%%%
+\subsection{Expression chaining}
 
 %%%%%%
 \subsection{Transform XML to JSON}
