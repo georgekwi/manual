@@ -1,0 +1,28 @@
+\BOOKMARK [0][-]{chapter.1}{Fundamentals \205 Review++}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Import a basic Mule project into Anypoint Studio}{chapter.1}% 2
+\BOOKMARK [2][-]{section*.1}{Import the starter project}{section.1.1}% 3
+\BOOKMARK [2][-]{section*.2}{Create new project}{section.1.1}% 4
+\BOOKMARK [1][-]{section.1.2}{Fundamentals review++}{chapter.1}% 5
+\BOOKMARK [2][-]{section*.3}{Create the flow, set the metadata}{section.1.2}% 6
+\BOOKMARK [2][-]{section*.4}{Construction}{section.1.2}% 7
+\BOOKMARK [2][-]{section*.5}{Fields}{section.1.2}% 8
+\BOOKMARK [2][-]{section*.6}{String concatenation}{section.1.2}% 9
+\BOOKMARK [2][-]{section*.7}{Conditional expressions}{section.1.2}% 10
+\BOOKMARK [2][-]{section*.8}{Array access and Ranges}{section.1.2}% 11
+\BOOKMARK [2][-]{section*.9}{Common functions}{section.1.2}% 12
+\BOOKMARK [2][-]{section*.10}{Expression chaining}{section.1.2}% 13
+\BOOKMARK [2][-]{section*.11}{Transform XML to JSON}{section.1.2}% 14
+\BOOKMARK [2][-]{section*.12}{Transform JSON to XML}{section.1.2}% 15
+\BOOKMARK [0][-]{chapter.2}{Variables, Functions, Modules}{}% 16
+\BOOKMARK [1][-]{section.2.1}{Organize DataWeave code with variables and functions}{chapter.2}% 17
+\BOOKMARK [2][-]{section*.13}{Create a new flow}{section.2.1}% 18
+\BOOKMARK [2][-]{section*.14}{Create a variable}{section.2.1}% 19
+\BOOKMARK [2][-]{section*.15}{Calculate the total seats as a function of the plane type using fun}{section.2.1}% 20
+\BOOKMARK [2][-]{section*.16}{Calculate the total seats as a function of the plane type using a \040expression}{section.2.1}% 21
+\BOOKMARK [1][-]{section.2.2}{Reuse DataWeave transformations}{chapter.2}% 22
+\BOOKMARK [1][-]{section.2.3}{Create and use DataWeave modules}{chapter.2}% 23
+\BOOKMARK [0][-]{chapter.3}{Defensive programming}{}% 24
+\BOOKMARK [0][-]{chapter.4}{Operating on Arrays and Objects}{}% 25
+\BOOKMARK [0][-]{chapter.5}{The Arrays and Objects Modules}{}% 26
+\BOOKMARK [0][-]{chapter.6}{Flights and Airports}{}% 27
+\BOOKMARK [0][-]{chapter.7}{Recursion}{}% 28

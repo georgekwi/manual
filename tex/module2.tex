@@ -7,15 +7,76 @@
 
 %%%%%%
 \subsection{Create a new flow}
+\begin{enumerate}
+\item Create a new Mule Configuration file and name it \texttt{mod2}, it will contain the solutions to all WTs from module 2.
+\item Create a new flow named \texttt{mod2-functions}
+\item Define the payload input metadata to the flights\_xml
+\item Edit the sample data
+\item Turn on the preview
+\item Change the output to \texttt{application/dw}
+\item Change the body of the expression to \texttt{payload..*return}
+\end{enumerate}
 
 %%%%%%
 \subsection{Create a variable}
+\begin{enumerate}[resume*]
+\item Create a variable visible throughout the DW expression
+  \begin{lstlisting}
+    var theTotalSeats = 400
+  \end{lstlisting}
+\item Add the \texttt{totalSeats} field to the existing list of objects, do it for a single object then do it for all objects in the collection
+  \begin{lstlisting}
+    %dw 2.0
+    output application/json
+    var theTotalSeats = 400
+    ---
+    payload..*return[0] ++ {
+      totalSeats: theTotalSeats
+    }
+  \end{lstlisting}
+\item Do it now for all elements
+  \begin{lstlisting}
+    %dw 2.0
+    output application/json
+    var theTotalSeats = 400
+    ---
+    payload..*return map ($ ++ {
+      totalSeats: theTotalSeats
+    })
+  \end{lstlisting}
+  \emph{
+    \texttt{++} we have already seen when concatenating strings we see it operating with objects as well because it is overloaded, more on overloading soon.
+  }
+\item There is another way to add a field(s) to an existing object
+  \begin{lstlisting}
+    %dw 2.0
+    output application/json
+    var theTotalSeats = 400
+    ---
+    payload..*return map {
+      ($)
+      totalSeats: theTotalSeats
+    }
+  \end{lstlisting}
+  \emph{
+    We have already seen $\{()\}$ when eliminating arrays, here these $()$ are applied to single objects with the same effect; i.e. destroy the object and retrieve the basic building blocks of the object, that is the keys and the associated values.  These basic building blocks are then introduced in the new object created by the outermost object.}
+  \newline
+  \emph{
+    Pick the method you prefer to concatenate objects, I prefer the latter which is the one I shall be using for the duration of this class.
+  }
+\end{enumerate}
 
 %%%%%%
 \subsection{Calculate the total seats as a function of the plane type using \texttt{fun}}
+\begin{enumerate}[resume*]
+\item
+\end{enumerate}
 
 %%%%%%
 \subsection{Calculate the total seats as a function of the plane type using a $\lambda$ expression}
+\begin{enumerate}[resume*]
+\item
+\end{enumerate}
 
 %%
 %%
