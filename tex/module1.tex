@@ -16,7 +16,7 @@
 \item Create a new project
   \newline
   \emph{
-    Creating a new project and copying only the files you minimally need for the class helps in containing the ``noise'' that is introduced with starter project.  Additionally, there is the extra benefit of not having to deal with students who are having compilation issues with the starter project.
+    Creating a new project and copying only the files you minimally need for the class helps in containing the ``noise'' that is introduced with the starter project.  Additionally, there is the extra benefit of not having to deal with students who are having compilation issues with the starter project.
   }
 \item Create a new project and call it dataweave
 \item From the apdw2-flights-starter copy the following files over to the new project:
@@ -179,15 +179,194 @@
 %%%%%%
 \subsection{Common functions}
 \begin{enumerate}[resume*]
-\item 
+
+\item \texttt{typeOf}
+  \newline
+  \emph{
+    This is a great function for debugging--again and it will help us identify the types of
+    data we are working with.  We will use it a few times to gain clarity when all else has
+    failed.
+  }
+  \begin{enumerate}
+    \item \texttt{typeOf([])}
+    \item \texttt{typeOf({})}
+  \end{enumerate}
+  
+\item \texttt{sizeOf}
+  \begin{enumerate}
+  \item \texttt{sizeOf({})}
+  \item \texttt{sizeOf({a: 1})}
+  \item \texttt{sizeOf(0 to 100)}
+  \item \texttt{sizeOf("ABC")}
+  \end{enumerate}
+
+\item \texttt{contains}
+  \begin{enumerate}
+  \item \texttt{[2,6,4] contains 2}
+  \item \texttt{"ABCD" contains "BC"}
+  \end{enumerate}
+
+\item \texttt{is}
+  \begin{enumerate}
+  \item \texttt{{} is Object}
+  \item \texttt{[] is Array}  
+  \end{enumerate}
 \end{enumerate}
 
 %%%%%%
 \subsection{Expression chaining}
+\begin{enumerate}[resume*]
+\item Create an array of integers
+  \begin{enumerate}
+  \item Do you know what expression chaining is?
+    \begin{enumerate}
+    \item \texttt{[2,5,3,7,8] map $+1 map $-1}
+    \end{enumerate}
+  \item We learned all about expression chains in elementary math!
+    \begin{enumerate}
+    \item \texttt{1 + 2 - 3}
+    \end{enumerate}
+  \end{enumerate}
+\item This is a good opportunity to briefly talk about the \texttt{map} function
+  \begin{enumerate}
+  \item Do you know what the \texttt{map} semantics are?
+    \begin{enumerate}
+    \item \texttt{map} is a function
+    \item \texttt{map} is invoked using infix notation
+    \item \texttt{map} takes two argments and evaluates to a value
+      \begin{enumerate}
+      \item Left: an array
+      \item Right: a \href{https://en.wikipedia.org/wiki/Lambda\_calculus}{$\lambda$ (lambda) Expression} (aka Anonymous Function). A $\lambda$ function is a function that you define and apply in a specific context, very similar to an anonymous class (in OOP) that you define and instantiate once.
+      \item Returns: another array whereby every element from the input array has been passed as an argument to the $\lambda$ function.
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
 
 %%%%%%
 \subsection{Transform XML to JSON}
+\begin{enumerate}[resume*]
+\item Create a new flow and name it \texttt{mod1-xml2json}
+\item Set the input payload metadata to \texttt{src/test/resources/deltaSoapResponsesToAllDestinations.xml}, name the new type \texttt{flights\_xml}
+\item Edit the sample data
+\item Turn on the preview
+\item change the output to \texttt{JSON}
+\item Replace \texttt{\{\}} to \texttt{payload}
+\item Explore the structure in the Preview and focus on the objects created with \texttt{return} fields repeating
+\item Is this a valid JSON data structure?
+  \newline
+  \emph{
+    According to the \href{https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{JSON specification} this is a valid JSON. But it is not appropriate.
+  }
+  \newline
+  Transform the XML into a JSON collection containing the objects found under \texttt{return} tags
+\item Use the \texttt{..*} selector to perform a recursive search and find fields named \texttt{return}
+  \begin{lstlisting}
+    payload..*return
+  \end{lstlisting}
+\item Go to the first element in the sample data under the \texttt{return} tag
+\item Add another \texttt{return} tag with a simple value
+\lstset{language=XML,
+  morekeywords={return,10}
+}
+\begin{lstlisting}
+  <return>
+    <airlineName>Delta</airlineName>
+    <code>A1B2C3</code>
+    <departureDate>2018/03/20</departureDate>
+    <destination>SFO</destination>
+    <emptySeats>40</emptySeats>
+    <origin>MUA</origin>
+    <planeType>Boing 737</planeType>
+    <price>400.0</price>
+    <return>10</return>
+  </return>
+\end{lstlisting}
+\item Illustrate that \texttt{..*} performs a breadth-first search and the output contains an extra result all the way to the bottom. 
+\item Use the \texttt{.*} selector to perform a search at the right level--no longer do we receive the next \texttt{return} result. 
+  \begin{lstlisting}
+    payload.findflightResponse.*return
+  \end{lstlisting}
+\item Restore your sample data by removing the additional nested \texttt{<return>10</return>} XML tag.
+\item Ensure you make use of the namespace from the input data.  Ignoring namespaces is not advised unless you are certain the data will always look the same, you will never have another \texttt{findFlightResponse} tag with a different meaning
+  \begin{lstlisting}
+    ns ns2 http://soap.training.mulesoft.com/
+    ---
+    payload.ns2#findFlightResponse.*return
+  \end{lstlisting}
+\item Copy all the data from the preview
+\item Create a new file under \texttt{src/test/resources} and call it \texttt{flights.json}
+\end{enumerate}
 
 %%%%%%
 \subsection{Transform JSON to XML}
+\begin{enumerate}[resume*]
+
+\item Create a new flow and name it \texttt{mod1-json2xml}
+\item Drop a DW to the process area
+\item Set the input payload metadata to \texttt{src/test/resources/flights.json}
+\item Edit the sample data
+\item Turn on the preview
+\item Change the output to XML
+\item Replace \texttt{\{\}} to \texttt{payload}
+\item The error error says \texttt{Cannot coarse an array ... to a String}
+  \begin{enumerate}
+  \item The problem lies with XML not having any knowledge of arrays but just repeating elements to indicate sequences.  No other format that I know of has such semantics, other formats have knowledge and serialization of the array type.
+  \item We need to proceed by eliminating the arrays
+  \end{enumerate}
+\item Create an appropriate XML for just two elements of the inputs
+  \lstset{language=dw}
+  \begin{lstlisting}
+    %dw 2.0
+    output application/xml
+    ---
+    flights: {
+      flight: payload[0],
+      flight: payload[1]
+    }
+  \end{lstlisting}
+\item Set the output to \texttt{application/dw} and identify the internal data structure we must aim for when generating XML
+\item We need to generate XML for all elements not just the first two, change the code so that we now iterate over the collection of data in the \texttt{payload}
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    flights: payload map {
+      flight: $
+    }
+  \end{lstlisting}
+\item Switch the output back to XML results in errors because we are still having an array in our data structure
+\item Change the output yet again to \texttt{application/dw}
+\item Eliminate the array by enclosing the \texttt{map} in \texttt{$\{()\}$}
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    flights: {(payload map {
+      flight: $
+    })}
+  \end{lstlisting}
+  \emph{
+    The semantics of \texttt{()} are the usual precedence operators, however \textbf{the semantics of parenthesis change when they appear on their own within \texttt{$\{\}$} enclosing (i) objects or (ii) arrays of objects} to the following: \textbf{Break every single object into pairs of keys and values}. The outer \texttt{$\{\}$} are there to construct a new object from all the pairs of keys and values. Hence why we end up with single object containing all the keys and their associated values for each object in the collection.
+  }
+\item \emph{So far we solved this transformation by following a top-to-bottom solution.  You can also solve this transformation by following a bottom-up approach.}
+  \newline
+  Change the expression back to just \texttt{payload} and eliminate the array first!
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    flights: {(payload)}
+  \end{lstlisting}
+\item Organize the records around their own tag before we destroy the array and collapse the first level of containing objects.
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    flights: {(payload map flight: $)}
+  \end{lstlisting}
+  \emph{Note that objects with a single field can have the \texttt{$\{\}$} omitted}
+\item Finally, change the output back to XML
+  
+\end{enumerate}
 
