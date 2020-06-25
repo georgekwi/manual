@@ -3,4 +3,7 @@
 *.log
 *.fls
 *.*mk
+*.out
+*.bbl
+*.blg
 *~
