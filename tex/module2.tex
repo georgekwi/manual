@@ -67,13 +67,83 @@
 \end{enumerate}
 
 %%%%%%
-\subsection{Calculate the total seats as a function of the plane type using \texttt{fun}}
+\subsection{Calculate the total seats as a function of the \texttt{planeType} using \texttt{fun}}
 \begin{enumerate}[resume*]
-\item
+\item Create and apply a function and start unit-testing it
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var theTotalSeats = 400
+    fun getTotalSeats(pt) = pt
+    ---
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeats($.planeType)
+    }
+  \end{lstlisting}
+  \emph{
+    \texttt{pt} is a user defined arbitrary name, denoting the sole input parameter
+  }
+  \newline
+  \emph{
+    By unit testing we refer to the method by which small chunks of our functionality is tested before we put them all together.  We are not referring to automated/regression testing.
+  }
+\item Create the condition that identifies 737s over the other types of planes
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var theTotalSeats = 400
+    fun getTotalSeats(pt) = pt contains "737"
+    ---
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeats($.planeType)
+    }
+  \end{lstlisting}
+\item Enclose the confition in an \texttt{if} expression
+  \begin{lstlisting}
+    fun getTotalSeats(pt) = if (
+      pt contains "737"
+    ) 150 else 300
+    ---
+    payload..*return map {
+      ($)
+      totalSeats: getTotalSeats($.planeType)
+    }
+  \end{lstlisting}
+\item Change the function expression to allow for the 727 and 707 to be set to 150 seats
+  \begin{lstlisting}
+    fun getTotalSeats(pt) = if (
+      pt contains "737" or
+      pt contains "707" or
+      pt contains "727"
+    ) 150 else 300
+  \end{lstlisting}
+\item Fix the error \texttt{Cannot coerce String (737) to Boolean}
+  \begin{lstlisting}
+    fun getTotalSeats(pt) = if (
+      (pt contains "737") or
+      (pt contains "707") or
+      (pt contains "727")
+    ) 150 else 300
+  \end{lstlisting}
+  \emph{
+    Parenthesization to enforce precedence is required in this context because \texttt{or} has higher precedence vs \texttt{contains}
+  }
+  \emph{
+    A chunk of the issues you will have when you start writing DW expressions on your own will stem from precedence rules.
+  }
+\item Discuss issues with the \texttt{getTotalSeats} functions
+  \begin{enumerate}
+  \item We execute this function once per record
+  \item We are searching strings
+  \item We do this string search three times
+  \item The function is not that efficient, we could do better
+  \end{enumerate}
 \end{enumerate}
 
 %%%%%%
-\subsection{Calculate the total seats as a function of the plane type using a $\lambda$ expression}
+\subsection{Calculate efficiently the total seats as a function of \texttt{planeType} using a $\lambda$ expression}
 \begin{enumerate}[resume*]
 \item
 \end{enumerate}
