@@ -140,13 +140,83 @@
   \item We do this string search three times
   \item The function is not that efficient, we could do better
   \end{enumerate}
+  \emph{
+    Please do not think for a moment that in modern computing string searches as slow, they are fast and could
+    be optimized in a number of ways.  Nonetheless, this discussion has merit in the presence of large to very
+    large data sets where the function is called once per record; i.e. every little bit helps!
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{Calculate efficiently the total seats as a function of \texttt{planeType} using a $\lambda$ expression}
 \begin{enumerate}[resume*]
-\item
+\item Create another function named \texttt{getTotalSeatsL}
+  \begin{lstlisting}
+    var getTotalSeatsL = (pt) -> pt
+  \end{lstlisting}
+  \emph{
+    L stands for Lambda, we store an anonymous function to a variable; i.e. we provide this anonymous function
+    with a name.  Additionaly, the body of this function evaluates into the argument we passed--this encourages
+    unit testing.
+  }
+\item Apply the function to in the expression and get results
+  \begin{lstlisting}
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeatsL($.planeType)
+    }
+  \end{lstlisting}
+  \emph{
+    Applying the function as soon as possible and getting results as we further develop our function
+    will only facilitate unit testing and code correctness.
+  }
+\item Get the last three characters of the plane type
+  \begin{lstlisting}
+    var getTotalSeatsL = (pt) -> pt[-3 to -1] as Number
+  \end{lstlisting}
+  \emph{
+    We can now use the number to compare instead of doing a string search which will speed up the execution of
+    our code.
+  }
+\item Introduce closures (i.e. localized declarations) using \texttt{do \{\}}
+  \begin{lstlisting}
+    var getTotalSeatsL = pt -> do {
+      var pn = pt[-3 to -1] as Number
+      ---
+      pn
+    }
+  \end{lstlisting}
+  \emph{
+    A \href{https://en.wikipedia.org/wiki/Closure_(computer_programming)}{closure} is a construct that allows for
+    the declaration of variables, functions, etc with a localized scope.  The \texttt{---} serve the same purpose
+    like the \texttt{---} we see in other DW expressions, they are section separators used to separate the
+    declarations and the expression.
+  }
+\item Add the conditional to the function
+  \begin{lstlisting}
+    var getTotalSeatsL = pt -> do {
+      var pn = pt[-3 to -1] as Number
+      ---
+      if (pn == 737 or pn == 707 or pn ==727) 150 else 300
+    }    
+  \end{lstlisting}
+  \emph{
+    You can use either one of these two functions to calculate the total seats; however, if you would like to use
+    features such as function overloading you MUST stick with the \texttt{fun}.
+  }
 \end{enumerate}
+
+%%%%%%
+\subsection{Adjust price for currency}
+\begin{enumerate}[resume*]
+\item 
+\end{enumerate}
+
+%%%%%%
+%%%%%%
+%%%%%%
+%%%%%%
+
 
 %%
 %%
