@@ -148,7 +148,7 @@
 \end{enumerate}
 
 %%%%%%
-\subsection{Calculate efficiently the total seats as a function of \texttt{planeType} using a $\lambda$ expression}
+\subsection{Calculate efficiently the total seats as a function of \texttt{planeType} using a lambda expression}
 \begin{enumerate}[resume*]
 \item Create another function named \texttt{getTotalSeatsL}
   \begin{lstlisting}
@@ -209,19 +209,103 @@
 %%%%%%
 \subsection{Adjust price for currency}
 \begin{enumerate}[resume*]
-\item 
+\item Create an object that contains currency exhcange rates
+  \begin{lstlisting}
+    var xes = {
+      USD: 1.0,
+      EUR: 0.9,
+      GBP: 0.8,
+      CAD: 1.3,
+      AUD: 1.5,
+      MXN: 25,
+      INR: 72
+    }
+  \end{lstlisting}
+  \emph{
+    We hardcode these currencies because we are within the confines of training.  We can easily fetch these
+    currencies dynamically from any data source and generate the map.
+  }
+\item Create a function to calculate the price for a currency
+  \begin{lstlisting}
+    var adjustFor = (p,c) -> p * xes[c]
+  \end{lstlisting}
+\item Apply the function in prefix syntax
+  \begin{lstlisting}
+    payload..*return map { ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustedFor($.price,"EUR")
+    }
+  \end{lstlisting}
+\item Apply the function in infix syntax
+  \begin{lstlisting}
+    payload..*return map { ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustFor($.price,"EUR"),
+      priceGBP: $.price adjustFor "GBP"
+    }    
+  \end{lstlisting}
+  \emph{
+    Functions with exactly two arguments get this infix application support!  In fact, infix function
+    application is encouraged because (1) it is natural in its application, (2) no need to use excessive
+    parenthesis, and (3) allows for a more natural application of expression chains.
+  }
 \end{enumerate}
-
-%%%%%%
-%%%%%%
-%%%%%%
-%%%%%%
-
 
 %%
 %%
 %%
 \section{Reuse DataWeave transformations}
+
+%%%%%%
+\subsection{Store DW code in a file}
+\begin{enumerate}
+\item Switch to the XML view of your file
+\item Navigate under the \lstinline!mod2-functions! flow and illustrate how the code is inline
+\item Switch back to the graphical view (aka Message Flow)
+\item Go to the properties of the DW processor under the \lstinline!mod2-functions!
+\item Click the Edit current target button (pencil icon)
+\item Click the radio button File and type \lstinline!dw/transforms/mod2/functions! in the text field to the right
+\item Click OK
+  \emph {
+    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have
+    stored the DW code inside a new file under \lstinline!src/main/resources/dw/transforms/mod2! named
+    \lstinline!functions.dwl!
+  }
+\end{enumerate}
+
+%%%%%%
+\subsection{Reuse the DW code from the file}
+\begin{enumerate}[resume*]
+\item Create a new flow named \lstinline!mod2-reuse!
+\item Drop a DW to the process area of the flow
+\item Switch to the XML view
+\item Locate the DW you just created
+\item Remove the \lstinline!CDATA! tag
+  \begin{lstlisting}
+    <![CDATA[%dw 2.0 output application/java --- {}]]>
+  \end{lstlisting}
+\item Introduce the \ttt{/} closing to the opening \ttt{<ee:set-payload />} tag, this should automatecally remove the explicit closing tag
+\item Add the attribute \ttt{resource} to the \ttt{<ee:set-payload />} tag
+  \begin{lstlisting}
+    <ee:set-payload resource="dw/transforms/mod2/functions.dwl" />
+  \end{lstlisting}
+  \emph{
+    This is the only way you could reuse the full trandormation, i.e. by modifying the XML.  Had you gone inside
+    the UI and attempt to reuse the file, you would be overwiting it!  That pencil button is a "one way trip",
+    only there to store the file not reference it.
+  }
+\item Switch back to the graphical view
+\item Open the properties of the the DW processor under the \ttt{mod2-reuse}
+\item Turn on the Preview
+  \emph{
+    There is an issue that indicates that there is no metadata identifying what the payload is.  You can fix
+    this issue by just setting the metadata again.  This issue is displayed because of DataSense.  This isssue
+    is only visible when in Studio, if we start the server and deploy our app, DataSense is never in play. 
+  }
+\item Set the input payload metadata to \ttt{flights\_xml}
+\item Turn on the Preview and validate you see the result
+\end{enumerate}
+
 
 %%%%%%
 %%%%%%
