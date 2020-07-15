@@ -8,13 +8,13 @@
 %%%%%%
 \subsection{Create a new flow}
 \begin{enumerate}
-\item Create a new Mule Configuration file and name it \texttt{mod2}, it will contain the solutions to all WTs from module 2.
-\item Create a new flow named \texttt{mod2-functions}
+\item Create a new Mule Configuration file and name it \ttt{mod2}, it will contain the solutions to all WTs from module 2.
+\item Create a new flow named \ttt{mod2-functions}
 \item Define the payload input metadata to the flights\_xml
 \item Edit the sample data
 \item Turn on the preview
-\item Change the output to \texttt{application/dw}
-\item Change the body of the expression to \texttt{payload..*return}
+\item Change the output to \ttt{application/dw}
+\item Change the body of the expression to \ttt{payload..*return}
 \end{enumerate}
 
 %%%%%%
@@ -24,7 +24,7 @@
   \begin{lstlisting}
     var theTotalSeats = 400
   \end{lstlisting}
-\item Add the \texttt{totalSeats} field to the existing list of objects, do it for a single object then do it for all objects in the collection
+\item Add the \ttt{totalSeats} field to the existing list of objects, do it for a single object then do it for all objects in the collection
   \begin{lstlisting}
     %dw 2.0
     output application/json
@@ -45,7 +45,7 @@
     })
   \end{lstlisting}
   \emph{
-    \texttt{++} we have already seen when concatenating strings we see it operating with objects as well because it is overloaded, more on overloading soon.
+    \ttt{++} we have already seen when concatenating strings we see it operating with objects as well because it is overloaded, more on overloading soon.
   }
 \item There is another way to add a field(s) to an existing object
   \begin{lstlisting}
@@ -67,7 +67,7 @@
 \end{enumerate}
 
 %%%%%%
-\subsection{Calculate the total seats as a function of the \texttt{planeType} using \texttt{fun}}
+\subsection{Calculate the total seats as a function of the \ttt{planeType} using \ttt{fun}}
 \begin{enumerate}[resume*]
 \item Create and apply a function and start unit-testing it
   \begin{lstlisting}
@@ -82,7 +82,7 @@
     }
   \end{lstlisting}
   \emph{
-    \texttt{pt} is a user defined arbitrary name, denoting the sole input parameter
+    \ttt{pt} is a user defined arbitrary name, denoting the sole input parameter
   }
   \newline
   \emph{
@@ -100,7 +100,7 @@
       totalSeats: getTotalSeats($.planeType)
     }
   \end{lstlisting}
-\item Enclose the confition in an \texttt{if} expression
+\item Enclose the confition in an \ttt{if} expression
   \begin{lstlisting}
     fun getTotalSeats(pt) = if (
       pt contains "737"
@@ -119,7 +119,7 @@
       pt contains "727"
     ) 150 else 300
   \end{lstlisting}
-\item Fix the error \texttt{Cannot coerce String (737) to Boolean}
+\item Fix the error \ttt{Cannot coerce String (737) to Boolean}
   \begin{lstlisting}
     fun getTotalSeats(pt) = if (
       (pt contains "737") or
@@ -128,12 +128,12 @@
     ) 150 else 300
   \end{lstlisting}
   \emph{
-    Parenthesization to enforce precedence is required in this context because \texttt{or} has higher precedence vs \texttt{contains}
+    Parenthesization to enforce precedence is required in this context because \ttt{or} has higher precedence vs \ttt{contains}
   }
   \emph{
     A chunk of the issues you will have when you start writing DW expressions on your own will stem from precedence rules.
   }
-\item Discuss issues with the \texttt{getTotalSeats} functions
+\item Discuss issues with the \ttt{getTotalSeats} functions
   \begin{enumerate}
   \item We execute this function once per record
   \item We are searching strings
@@ -148,9 +148,9 @@
 \end{enumerate}
 
 %%%%%%
-\subsection{Calculate efficiently the total seats as a function of \texttt{planeType} using a lambda expression}
+\subsection{Calculate efficiently the total seats as a function of \ttt{planeType} using a lambda expression}
 \begin{enumerate}[resume*]
-\item Create another function named \texttt{getTotalSeatsL}
+\item Create another function named \ttt{getTotalSeatsL}
   \begin{lstlisting}
     var getTotalSeatsL = (pt) -> pt
   \end{lstlisting}
@@ -178,7 +178,7 @@
     We can now use the number to compare instead of doing a string search which will speed up the execution of
     our code.
   }
-\item Introduce closures (i.e. localized declarations) using \texttt{do \{\}}
+\item Introduce closures (i.e. localized declarations) using \ttt{do \{\}}
   \begin{lstlisting}
     var getTotalSeatsL = pt -> do {
       var pn = pt[-3 to -1] as Number
@@ -188,8 +188,8 @@
   \end{lstlisting}
   \emph{
     A \href{https://en.wikipedia.org/wiki/Closure_(computer_programming)}{closure} is a construct that allows for
-    the declaration of variables, functions, etc with a localized scope.  The \texttt{---} serve the same purpose
-    like the \texttt{---} we see in other DW expressions, they are section separators used to separate the
+    the declaration of variables, functions, etc with a localized scope.  The \ttt{---} serve the same purpose
+    like the \ttt{---} we see in other DW expressions, they are section separators used to separate the
     declarations and the expression.
   }
 \item Add the conditional to the function
@@ -202,7 +202,7 @@
   \end{lstlisting}
   \emph{
     You can use either one of these two functions to calculate the total seats; however, if you would like to use
-    features such as function overloading you MUST stick with the \texttt{fun}.
+    features such as function overloading you MUST stick with the \ttt{fun}.
   }
 \end{enumerate}
 
@@ -231,9 +231,10 @@
   \end{lstlisting}
 \item Apply the function in prefix syntax
   \begin{lstlisting}
-    payload..*return map { ($),
+    payload..*return map {
+      ($),
       totalSeats: getTotalSeatsL($.planeType),
-      priceEUR: adjustedFor($.price,"EUR")
+      priceEUR: adjustFor($.price,"EUR")
     }
   \end{lstlisting}
 \item Apply the function in infix syntax
@@ -307,21 +308,113 @@
 \end{enumerate}
 
 
-%%%%%%
-%%%%%%
-%%%%%%
-%%%%%%
-%%%%%%
-%%%%%%
+%%
+%%
+%%
 
-
-%%
-%%
-%%
 \section{Create and use DataWeave modules}
 
+
 %%%%%%
+\subsection{Create a DW module}
+\begin{enumerate}
+\item Create a new folder(s) under \ttt{src/main/resources}
+\item In the text field type \ttt{dw/modules}
+\item Create a new file under \ttt{dw.modules} and name it \ttt{Currency.dwl}
+\item Type on line 1
+  \begin{lstlisting}
+    %dw 2.0
+  \end{lstlisting}
+  \emph{
+    DW modules can only contain declarations.  Declarations such as variables, function, types, etc.
+  }
+\item Navigate back to the DW processor under \ttt{mod2-reuse}
+\item Copy the \ttt{xes} variable and the \ttt{adjustFor} function
+\item Paste to \ttt{Currency.dwl} under line 1 and save
+\end{enumerate}
+
 %%%%%%
+\subsection{Use the module}
+\begin{enumerate}[resume*]
+\item Go back to the DW processor under \ttt{mod2-reuse}
+\item Use the module by fully qualifying the function to adjust the price for the CAD currency
+  \begin{lstlisting}
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustFor($.price, "EUR"),
+      priceGBP: $.price adjustFor "GBP",
+      priceCAD: $.price dw::modules::Currency::adjustFor "CAD"
+    }    
+  \end{lstlisting}
+\item Import the new module below the output directive
+  \begin{lstlisting}
+    import dw::modules::Currency
+  \end{lstlisting}
+\item Use the module again this time by taking advantage of the \ttt{import} to adjust the price for AUD
+  \begin{lstlisting}
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustFor($.price, "EUR"),
+      priceGBP: $.price adjustFor "GBP",
+      priceAUD: $.price Currency::adjustFor "AUD"
+    }      
+  \end{lstlisting}
+\item Import the module again and provide an an alias to the module
+  \begin{lstlisting}
+    import dw::modules::Currency as Curr
+  \end{lstlisting}
+\item Use the module through the \ttt{Curr} alias next
+  \begin{lstlisting}
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustFor($.price, "EUR"),
+      priceGBP: $.price adjustFor "GBP",
+      priceAUD: $.price Currency::adjustFor "AUD",
+      priceMXN: $.price Curr::adjustFor "MXN"
+    }
+  \end{lstlisting}
+\item Import all declarations to the current namespace
+  \begin{lstlisting}
+    import * from dw::modules::Currency
+  \end{lstlisting}
+\item Use directly the \ttt{adjustFor} function
+  \begin{lstlisting}
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustFor($.price, "EUR"),
+      priceGBP: $.price adjustFor "GBP",
+      priceAUD: $.price Currency::adjustFor "AUD",
+      priceMXN: $.price Curr::adjustFor "MXN",
+      priceINR: $.price adjustFor "INR"
+    }
+  \end{lstlisting}
+  \emph{
+    There is also an inline version of the \ttt{adjustFor} function which takes precedence.
+    As such we are not using the function provided by the module.  We can very easily
+    verify by changing the body of the inline function, just change the body to 1000.
+  }
+\item Modify the last \ttt{import} to selectively import declarations and provide them with aliases
+  \begin{lstlisting}
+    import adjustFor as adj4 from dw::modules::Currency
+  \end{lstlisting}
+\item Use the \ttt{adj4} alias
+  \begin{lstlisting}
+    payload..*return map {
+      ($),
+      totalSeats: getTotalSeatsL($.planeType),
+      priceEUR: adjustFor($.price, "EUR"),
+      priceGBP: $.price adjustFor "GBP",
+      priceAUD: $.price Currency::adjustFor "AUD",
+      priceMXN: $.price Curr::adjustFor "MXN",
+      priceINR: $.price adj4 "INR"
+    }
+  \end{lstlisting}
+\end{enumerate}  
+
 %%%%%%
 %%%%%%
 %%%%%%

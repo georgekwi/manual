@@ -8,7 +8,7 @@
 \begin{enumerate}
 \item Start Anypoint Studio
 \item Create a new workspace
-\item Import the \texttt{apdw2-flights-starter.jar} project under the \texttt{studentFiles/mod01}
+\item Import the \ttt{apdw2-flights-starter.jar} project under the \ttt{studentFiles/mod01}
 \end{enumerate}
 %%%%%%
 \subsection{Create new project}
@@ -21,9 +21,9 @@
 \item Create a new project and call it dataweave
 \item From the apdw2-flights-starter copy the following files over to the new project:
   \begin{enumerate}
-  \item \texttt{src/main/resources/airportInfoTiny.csv} to \texttt{src/main/resources}
-  \item \texttt{src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \texttt{src/test/resources}
-  \item \texttt{src/test/resources/flight-example.json} to \texttt{src/test/resources}
+  \item \ttt{src/main/resources/airportInfoTiny.csv} to \ttt{src/main/resources}
+  \item \ttt{src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \ttt{src/test/resources}
+  \item \ttt{src/test/resources/flight-example.json} to \ttt{src/test/resources}
   \end{enumerate}
 \end{enumerate}
 
@@ -38,8 +38,8 @@
 %%%%%%
 \subsection{Create the flow, set the metadata}
 \begin{enumerate}
-\item Rename the \texttt{dataweave.xml} to \texttt{mod1.xml}
-\item Create a new flow named \texttt{mod1-review++}
+\item Rename the \ttt{dataweave.xml} to \ttt{mod1.xml}
+\item Create a new flow named \ttt{mod1-review++}
   \newline
   \emph{
     The reason for prefixing the flow name with the name of the flow is a best-practice one.
@@ -47,9 +47,9 @@
     Mule Configuration file a flow is defined under by just looking at a Flow Reference's
     display name.
   }
-\item Drop a DW (aka \texttt{Transform Message}) to the process area of the flow
-\item Define the payload input metadata to the \texttt{src/test/resources/flight-example.json},
-  set the name of the type to \texttt{flight\_json}
+\item Drop a DW (aka \ttt{Transform Message}) to the process area of the flow
+\item Define the payload input metadata to the \ttt{src/test/resources/flight-example.json},
+  set the name of the type to \ttt{flight\_json}
 \item Edit the sample data
 \item Turn on the preview
 \item Change the output to JSON
@@ -58,11 +58,11 @@
 %%%%%%
 \subsection{Construction}
 \begin{enumerate}[resume*]
-\item What are the semantics of \texttt{\{\}} in DW?
+\item What are the semantics of \ttt{\{\}} in DW?
   \begin{enumerate}
   \item Object creation
   \end{enumerate}
-\item What are the semantics of \texttt{[]} in DW?
+\item What are the semantics of \ttt{[]} in DW?
   \begin{enumerate}
   \item Array creation
   \end{enumerate}
@@ -71,12 +71,12 @@
 %%%%%%
 \subsection{Fields}
 \begin{enumerate}[resume*]
-\item Three different ways of accessing the field \texttt{airline}
-  out of the \texttt{payload}. What are they?
+\item Three different ways of accessing the field \ttt{airline}
+  out of the \ttt{payload}. What are they?
   \begin{enumerate}
-  \item \texttt{payload.airline}
-  \item \texttt{payload["airline"]}
-  \item \texttt{payload[0]}
+  \item \ttt{payload.airline}
+  \item \ttt{payload["airline"]}
+  \item \ttt{payload[0]}
   \end{enumerate}
   \emph{Let me let you in a secret: Objects internally are represented as arrays—field access is a façade}
 \item Why DW stores objects as arrays?
@@ -114,20 +114,20 @@
 \begin{enumerate}[resume*]
 \item Two ways to concatenate strings
   \begin{enumerate}
-  \item \texttt{"The flight is operated by " ++ payload.airline}
-  \item \texttt{"The flight is operated by \$\{payload.airline\}"}
+  \item \ttt{"The flight is operated by " ++ payload.airline}
+  \item \ttt{"The flight is operated by \$\{payload.airline\}"}
   \end{enumerate}
-\item You have to be careful that the expression inside the \texttt{\$\{\}} returns
+\item You have to be careful that the expression inside the \ttt{\$\{\}} returns
   a string, otherwise you will be getting type missmatch errors.
 \end{enumerate}
 
 %%%%%%
 \subsection{Conditional expressions}
 \begin{enumerate}[resume*]
-\item \texttt{if then else} conditional
+\item \ttt{if then else} conditional
   \begin{enumerate}
-  \item \texttt{if (true) 1 else 0}
-  \item \texttt{if (false) 1 else 0}
+  \item \ttt{if (true) 1 else 0}
+  \item \ttt{if (false) 1 else 0}
   \end{enumerate}
 \item Nullity conditional
   \begin{enumerate}
@@ -159,20 +159,20 @@
 \begin{enumerate}[resume*]
 \item Array access
   \begin{enumerate}
-  \item \texttt{[2,6,4,1,7][0]} evaluates to \texttt{2}
-  \item \texttt{[2,6,4,1,7][-1]} evaluates to \texttt{7}
+  \item \ttt{[2,6,4,1,7][0]} evaluates to \ttt{2}
+  \item \ttt{[2,6,4,1,7][-1]} evaluates to \ttt{7}
   \end{enumerate}
 \item Ranges
   \begin{enumerate}
-  \item \texttt{0 to 5} evaluates to the \texttt{[0,1,2,3,4,5]} array 
-  \item \texttt{5 to 0} evaluates to the \texttt{[5,4,3,2,1,0]} array
+  \item \ttt{0 to 5} evaluates to the \ttt{[0,1,2,3,4,5]} array 
+  \item \ttt{5 to 0} evaluates to the \ttt{[5,4,3,2,1,0]} array
   \end{enumerate}
 \item Ranges, Arrays, and Strings
   \begin{enumerate}
-  \item \texttt{[2,6,4,1,7][1 to -2]} evaluates to the \texttt{[6,4,1,7]} sub-array
-  \item \texttt{[2,6,4,1,7][-1 to 0} reverses the array
-  \item \texttt{payload.airline[-3 to -1]} evaluates to the last characters in the string
-  \item \texttt{payload.airline[-1 to 0]} reverses the string
+  \item \ttt{[2,6,4,1,7][1 to -2]} evaluates to the \ttt{[6,4,1,7]} sub-array
+  \item \ttt{[2,6,4,1,7][-1 to 0} reverses the array
+  \item \ttt{payload.airline[-3 to -1]} evaluates to the last characters in the string
+  \item \ttt{payload.airline[-1 to 0]} reverses the string
   \end{enumerate}
 \end{enumerate}
 
@@ -180,7 +180,7 @@
 \subsection{Common functions}
 \begin{enumerate}[resume*]
 
-\item \texttt{typeOf}
+\item \ttt{typeOf}
   \newline
   \emph{
     This is a great function for debugging--again and it will help us identify the types of
@@ -188,28 +188,28 @@
     failed.
   }
   \begin{enumerate}
-    \item \texttt{typeOf([])}
-    \item \texttt{typeOf({})}
+    \item \ttt{typeOf([])}
+    \item \ttt{typeOf({})}
   \end{enumerate}
   
-\item \texttt{sizeOf}
+\item \ttt{sizeOf}
   \begin{enumerate}
-  \item \texttt{sizeOf({})}
-  \item \texttt{sizeOf({a: 1})}
-  \item \texttt{sizeOf(0 to 100)}
-  \item \texttt{sizeOf("ABC")}
+  \item \ttt{sizeOf({})}
+  \item \ttt{sizeOf({a: 1})}
+  \item \ttt{sizeOf(0 to 100)}
+  \item \ttt{sizeOf("ABC")}
   \end{enumerate}
 
-\item \texttt{contains}
+\item \ttt{contains}
   \begin{enumerate}
-  \item \texttt{[2,6,4] contains 2}
-  \item \texttt{"ABCD" contains "BC"}
+  \item \ttt{[2,6,4] contains 2}
+  \item \ttt{"ABCD" contains "BC"}
   \end{enumerate}
 
-\item \texttt{is}
+\item \ttt{is}
   \begin{enumerate}
-  \item \texttt{{} is Object}
-  \item \texttt{[] is Array}  
+  \item \ttt{{} is Object}
+  \item \ttt{[] is Array}  
   \end{enumerate}
 \end{enumerate}
 
@@ -220,20 +220,20 @@
   \begin{enumerate}
   \item Do you know what expression chaining is?
     \begin{enumerate}
-    \item \texttt{[2,5,3,7,8] map $+1 map $-1}
+    \item \ttt{[2,5,3,7,8] map $+1 map $-1}
     \end{enumerate}
   \item We learned all about expression chains in elementary math!
     \begin{enumerate}
-    \item \texttt{1 + 2 - 3}
+    \item \ttt{1 + 2 - 3}
     \end{enumerate}
   \end{enumerate}
-\item This is a good opportunity to briefly talk about the \texttt{map} function
+\item This is a good opportunity to briefly talk about the \ttt{map} function
   \begin{enumerate}
-  \item Do you know what the \texttt{map} semantics are?
+  \item Do you know what the \ttt{map} semantics are?
     \begin{enumerate}
-    \item \texttt{map} is a function
-    \item \texttt{map} is invoked using infix notation
-    \item \texttt{map} takes two argments and evaluates to a value
+    \item \ttt{map} is a function
+    \item \ttt{map} is invoked using infix notation
+    \item \ttt{map} takes two argments and evaluates to a value
       \begin{enumerate}
       \item Left: an array
       \item Right: a \href{https://en.wikipedia.org/wiki/Lambda\_calculus}{$\lambda$ (lambda) Expression} (aka Anonymous Function). A $\lambda$ function is a function that you define and apply in a specific context, very similar to an anonymous class (in OOP) that you define and instantiate once.
@@ -246,26 +246,26 @@
 %%%%%%
 \subsection{Transform XML to JSON}
 \begin{enumerate}[resume*]
-\item Create a new flow and name it \texttt{mod1-xml2json}
-\item Set the input payload metadata to \texttt{src/test/resources/deltaSoapResponsesToAllDestinations.xml}, name the new type \texttt{flights\_xml}
+\item Create a new flow and name it \ttt{mod1-xml2json}
+\item Set the input payload metadata to \ttt{src/test/resources/deltaSoapResponsesToAllDestinations.xml}, name the new type \ttt{flights\_xml}
 \item Edit the sample data
 \item Turn on the preview
-\item change the output to \texttt{JSON}
-\item Replace \texttt{\{\}} to \texttt{payload}
-\item Explore the structure in the Preview and focus on the objects created with \texttt{return} fields repeating
+\item change the output to \ttt{JSON}
+\item Replace \ttt{\{\}} to \ttt{payload}
+\item Explore the structure in the Preview and focus on the objects created with \ttt{return} fields repeating
 \item Is this a valid JSON data structure?
   \newline
   \emph{
     According to the \href{https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf}{JSON specification} this is a valid JSON. But it is not appropriate.
   }
   \newline
-  Transform the XML into a JSON collection containing the objects found under \texttt{return} tags
-\item Use the \texttt{..*} selector to perform a recursive search and find fields named \texttt{return}
+  Transform the XML into a JSON collection containing the objects found under \ttt{return} tags
+\item Use the \ttt{..*} selector to perform a recursive search and find fields named \ttt{return}
   \begin{lstlisting}
     payload..*return
   \end{lstlisting}
-\item Go to the first element in the sample data under the \texttt{return} tag
-\item Add another \texttt{return} tag with a simple value
+\item Go to the first element in the sample data under the \ttt{return} tag
+\item Add another \ttt{return} tag with a simple value
 \lstset{language=XML,
   morekeywords={return,10}
 }
@@ -282,34 +282,34 @@
     <return>10</return>
   </return>
 \end{lstlisting}
-\item Illustrate that \texttt{..*} performs a breadth-first search and the output contains an extra result all the way to the bottom. 
-\item Use the \texttt{.*} selector to perform a search at the right level--no longer do we receive the next \texttt{return} result. 
+\item Illustrate that \ttt{..*} performs a breadth-first search and the output contains an extra result all the way to the bottom. 
+\item Use the \ttt{.*} selector to perform a search at the right level--no longer do we receive the next \ttt{return} result. 
   \begin{lstlisting}
     payload.findflightResponse.*return
   \end{lstlisting}
-\item Restore your sample data by removing the additional nested \texttt{<return>10</return>} XML tag.
-\item Ensure you make use of the namespace from the input data.  Ignoring namespaces is not advised unless you are certain the data will always look the same, you will never have another \texttt{findFlightResponse} tag with a different meaning
+\item Restore your sample data by removing the additional nested \ttt{<return>10</return>} XML tag.
+\item Ensure you make use of the namespace from the input data.  Ignoring namespaces is not advised unless you are certain the data will always look the same, you will never have another \ttt{findFlightResponse} tag with a different meaning
   \begin{lstlisting}
     ns ns2 http://soap.training.mulesoft.com/
     ---
     payload.ns2#findFlightResponse.*return
   \end{lstlisting}
 \item Copy all the data from the preview
-\item Create a new file under \texttt{src/test/resources} and call it \texttt{flights.json}
+\item Create a new file under \ttt{src/test/resources} and call it \ttt{flights.json}
 \end{enumerate}
 
 %%%%%%
 \subsection{Transform JSON to XML}
 \begin{enumerate}[resume*]
 
-\item Create a new flow and name it \texttt{mod1-json2xml}
+\item Create a new flow and name it \ttt{mod1-json2xml}
 \item Drop a DW to the process area
-\item Set the input payload metadata to \texttt{src/test/resources/flights.json}
+\item Set the input payload metadata to \ttt{src/test/resources/flights.json}
 \item Edit the sample data
 \item Turn on the preview
 \item Change the output to XML
-\item Replace \texttt{\{\}} to \texttt{payload}
-\item The error error says \texttt{Cannot coarse an array ... to a String}
+\item Replace \ttt{\{\}} to \ttt{payload}
+\item The error error says \ttt{Cannot coarse an array ... to a String}
   \begin{enumerate}
   \item The problem lies with XML not having any knowledge of arrays but just repeating elements to indicate sequences.  No other format that I know of has such semantics, other formats have knowledge and serialization of the array type.
   \item We need to proceed by eliminating the arrays
@@ -325,8 +325,8 @@
       flight: payload[1]
     }
   \end{lstlisting}
-\item Set the output to \texttt{application/dw} and identify the internal data structure we must aim for when generating XML
-\item We need to generate XML for all elements not just the first two, change the code so that we now iterate over the collection of data in the \texttt{payload}
+\item Set the output to \ttt{application/dw} and identify the internal data structure we must aim for when generating XML
+\item We need to generate XML for all elements not just the first two, change the code so that we now iterate over the collection of data in the \ttt{payload}
   \begin{lstlisting}
     %dw 2.0
     output application/dw
@@ -336,8 +336,8 @@
     }
   \end{lstlisting}
 \item Switch the output back to XML results in errors because we are still having an array in our data structure
-\item Change the output yet again to \texttt{application/dw}
-\item Eliminate the array by enclosing the \texttt{map} in \texttt{$\{()\}$}
+\item Change the output yet again to \ttt{application/dw}
+\item Eliminate the array by enclosing the \ttt{map} in \ttt{$\{()\}$}
   \begin{lstlisting}
     %dw 2.0
     output application/dw
@@ -347,11 +347,11 @@
     })}
   \end{lstlisting}
   \emph{
-    The semantics of \texttt{()} are the usual precedence operators, however \textbf{the semantics of parenthesis change when they appear on their own within \texttt{$\{\}$} enclosing (i) objects or (ii) arrays of objects} to the following: \textbf{Break every single object into pairs of keys and values}. The outer \texttt{$\{\}$} are there to construct a new object from all the pairs of keys and values. Hence why we end up with single object containing all the keys and their associated values for each object in the collection.
+    The semantics of \ttt{()} are the usual precedence operators, however \textbf{the semantics of parenthesis change when they appear on their own within \ttt{$\{\}$} enclosing (i) objects or (ii) arrays of objects} to the following: \textbf{Break every single object into pairs of keys and values}. The outer \ttt{$\{\}$} are there to construct a new object from all the pairs of keys and values. Hence why we end up with single object containing all the keys and their associated values for each object in the collection.
   }
 \item \emph{So far we solved this transformation by following a top-to-bottom solution.  You can also solve this transformation by following a bottom-up approach.}
   \newline
-  Change the expression back to just \texttt{payload} and eliminate the array first!
+  Change the expression back to just \ttt{payload} and eliminate the array first!
   \begin{lstlisting}
     %dw 2.0
     output application/dw
@@ -365,7 +365,7 @@
     ---
     flights: {(payload map flight: $)}
   \end{lstlisting}
-  \emph{Note that objects with a single field can have the \texttt{$\{\}$} omitted}
+  \emph{Note that objects with a single field can have the \ttt{$\{\}$} omitted}
 \item Finally, change the output back to XML
   
 \end{enumerate}
