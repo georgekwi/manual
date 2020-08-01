@@ -93,19 +93,17 @@
     ... and the only way I can access the second and third field is through an index access.
     But now we have more questions that need to be answered.
   \item Why would a language allow for such a feature?  That is duplicate fields within an object.
-    \begin{enumerate}
-    \item Because of XML, how else you expect to be able to generate XML with tags that repeat:
-      \begin{lstlisting}
-        %dw 2.0
-        output application/xml
-        ---
-        "as": {
-	  a: 1,
-	  a: 2,
-	  a: 3
-        }        
-      \end{lstlisting}
-    \end{enumerate}
+    Because of XML, how else you expect to be able to generate XML with tags that repeat:
+    \begin{lstlisting}
+      %dw 2.0
+      output application/xml
+      ---
+      "as": {
+	a: 1,
+	a: 2,
+	a: 3
+      }        
+    \end{lstlisting}
   \end{enumerate}
 \end{enumerate}
 
@@ -131,8 +129,8 @@
   \end{enumerate}
 \item Nullity conditional
   \begin{enumerate}
-  \item lstinline{null default "Other value"}
-  \item lstinline{"The value" default "Other value"}
+  \item \lstinline{null default "Other value"}
+  \item \lstinline{"The value" default "Other value"}
   \end{enumerate}
 \item Conditional elements
   \begin{enumerate}
