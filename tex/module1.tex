@@ -18,8 +18,12 @@
   \emph{
     Creating a new project and copying only the files you minimally need for the class helps in containing the ``noise'' that is introduced with the starter project.  Additionally, there is the extra benefit of not having to deal with students who are having compilation issues with the starter project.
   }
-\item Create a new project and call it dataweave
-\item From the apdw2-flights-starter copy the following files over to the new project:
+  \newline
+  \emph{
+    Furthermore, you become familiar with the starter project in case you would like to follow the manual that comes packaged with the class.
+  }
+\item Create a new project and call it \ttt{dataweave}
+\item From the \ttt{apdw2-flights-starter} copy the following files over to the new project:
   \begin{enumerate}
   \item \ttt{src/main/resources/airportInfoTiny.csv} to \ttt{src/main/resources}
   \item \ttt{src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \ttt{src/test/resources}
@@ -32,7 +36,7 @@
 %%
 \section{Fundamentals review++}
 \emph{
-  In this WT the goal is to attempt (I am saying attempt because often enough we have participants who don’t meet the prerequisites) to bring everyone at the same level by (1) reviewing fundamentals and (2) illustrating features of DW that we will be using throughout the class
+  In this WT the goal is to attempt (I am saying attempt because often enough we have participants who don’t meet the prerequisites) to bring everyone at the same level by (1) reviewing fundamentals and (2) illustrating features of DW that we will be using throughout the class.
 }
 
 %%%%%%
@@ -42,12 +46,12 @@
 \item Create a new flow named \ttt{mod1-review++}
   \newline
   \emph{
-    The reason for prefixing the flow name with the name of the flow is a best-practice one.
+    The reason for prefixing the flow name with the name of the flow is one of good practice.
     Such a convention will improve the readability of your flows by identifying the
     Mule Configuration file a flow is defined under by just looking at a Flow Reference's
     display name.
   }
-\item Drop a DW (aka \ttt{Transform Message}) to the process area of the flow
+\item Drop a DW (aka \ttt{Transform Message}) processor to the process area of the flow
 \item Define the payload input metadata to the \ttt{src/test/resources/flight-example.json},
   set the name of the type to \ttt{flight\_json}
 \item Edit the sample data
