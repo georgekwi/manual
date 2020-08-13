@@ -7,5 +7,6 @@
 *.bbl
 *.blg
 *.dvi
+*.bak
 .DS_Store
 *~
