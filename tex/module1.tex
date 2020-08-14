@@ -82,7 +82,7 @@
   \item \ttt{payload["airline"]}
   \item \ttt{payload[0]}
   \end{enumerate}
-  \emph{Let me let you in a secret: Objects internally are represented as arrays—field access is a façade}
+  \emph{Let me let you in a secret: Objects internally are represented as arrays—field access is a facade}
 \item Why DW stores objects as arrays?
   \begin{enumerate}
   \item Because DW is the only language I know of that allows the creation of objects with
@@ -120,7 +120,7 @@
   \item \ttt{"The flight is operated by \$\{payload.airline\}"}
   \end{enumerate}
 \item You have to be careful that the expression inside the \ttt{\$\{\}} returns
-  a string, otherwise you will be getting type missmatch errors.
+  a string, otherwise you will be getting type mismatch errors.
 \end{enumerate}
 
 %%%%%%
@@ -235,7 +235,7 @@
     \begin{enumerate}
     \item \ttt{map} is a function
     \item \ttt{map} is invoked using infix notation
-    \item \ttt{map} takes two argments and evaluates to a value
+    \item \ttt{map} takes two arguments and evaluates to a value
       \begin{enumerate}
       \item Left: an array
       \item Right: a \href{https://en.wikipedia.org/wiki/Lambda\_calculus}{$\lambda$ (lambda) Expression} (aka Anonymous Function). A $\lambda$ function is a function that you define and apply in a specific context, very similar to an anonymous class (in OOP) that you define and instantiate once.

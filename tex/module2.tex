@@ -100,7 +100,7 @@
       totalSeats: getTotalSeats($.planeType)
     }
   \end{lstlisting}
-\item Enclose the confition in an \ttt{if} expression
+\item Enclose the condition in an \ttt{if} expression
   \begin{lstlisting}
     fun getTotalSeats(pt) = if (
       pt contains "737"
@@ -128,7 +128,7 @@
     ) 150 else 300
   \end{lstlisting}
   \emph{
-    Parenthesization to enforce precedence is required in this context because \ttt{or} has higher precedence vs \ttt{contains}
+    Parenthesizing to enforce precedence is required in this context because \ttt{or} has higher precedence vs \ttt{contains}
   }
   \emph{
     A chunk of the issues you will have when you start writing DW expressions on your own will stem from precedence rules.
@@ -156,7 +156,7 @@
   \end{lstlisting}
   \emph{
     L stands for Lambda, we store an anonymous function to a variable; i.e. we provide this anonymous function
-    with a name.  Additionaly, the body of this function evaluates into the argument we passed--this encourages
+    with a name.  Additionally, the body of this function evaluates into the argument we passed--this encourages
     unit testing.
   }
 \item Apply the function to in the expression and get results
@@ -209,7 +209,7 @@
 %%%%%%
 \subsection{Adjust price for currency}
 \begin{enumerate}[resume*]
-\item Create an object that contains currency exhcange rates
+\item Create an object that contains currency exchange rates
   \begin{lstlisting}
     var xes = {
       USD: 1.0,
@@ -222,7 +222,7 @@
     }
   \end{lstlisting}
   \emph{
-    We hardcode these currencies because we are within the confines of training.  We can easily fetch these
+    We hard-code these currencies because we are within the confines of training.  We can easily fetch these
     currencies dynamically from any data source and generate the map.
   }
 \item Create a function to calculate the price for a currency
@@ -285,14 +285,14 @@
   \begin{lstlisting}
     <![CDATA[%dw 2.0 output application/java --- {}]]>
   \end{lstlisting}
-\item Introduce the \ttt{/} closing to the opening \ttt{<ee:set-payload />} tag, this should automatecally remove the explicit closing tag
+\item Introduce the \ttt{/} closing to the opening \ttt{<ee:set-payload />} tag, this should automatically remove the explicit closing tag
 \item Add the attribute \ttt{resource} to the \ttt{<ee:set-payload />} tag
   \begin{lstlisting}
     <ee:set-payload resource="dw/transforms/mod2/functions.dwl" />
   \end{lstlisting}
   \emph{
-    This is the only way you could reuse the full trandormation, i.e. by modifying the XML.  Had you gone inside
-    the UI and attempt to reuse the file, you would be overwiting it!  That pencil button is a "one way trip",
+    This is the only way you could reuse the full transformation, i.e. by modifying the XML.  Had you gone inside
+    the UI and attempt to reuse the file, you would be overwriting it!  That pencil button is a "one way trip",
     only there to store the file not reference it.
   }
 \item Switch back to the graphical view
@@ -300,7 +300,7 @@
 \item Turn on the Preview
   \emph{
     There is an issue that indicates that there is no metadata identifying what the payload is.  You can fix
-    this issue by just setting the metadata again.  This issue is displayed because of DataSense.  This isssue
+    this issue by just setting the metadata again.  This issue is displayed because of DataSense.  This issue
     is only visible when in Studio, if we start the server and deploy our app, DataSense is never in play. 
   }
 \item Set the input payload metadata to \ttt{flights\_xml}
