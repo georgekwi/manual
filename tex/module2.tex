@@ -1,5 +1,13 @@
-\chapter{Variables, Functions, Modules}
-
+\chapter{ Use Case: XML flights to JSON }
+As a developer I want to receive XML flight records and generate an enhanced JSON data structure with the corresponding flights.
+\newline
+The JSON data structure is enhanced as follows:
+\begin{itemize}
+\item It contains the corresponding appropriate JSON structure contain the flights from the XML inputs
+\item It is enhanced with total seating capacity per flight
+\item It is enhanced with prices adjusted across a number of currencies
+\item It is enhanced such that important KPIs are contained at the same level as the flights
+\end{itemize}
 %%
 %%
 %%
@@ -67,6 +75,56 @@
 \end{enumerate}
 
 %%%%%%
+\subsection{Fix the Boing typo}
+\begin{enumerate}[resume*]
+\item Add another field containing the \ttt{planeType} value
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var theTotalSeats=400
+    ---
+    payload..*return map {
+      ($),
+      planeType: $.planeType,
+      totalSeats: theTotalSeats
+    }
+  \end{lstlisting}
+  \emph {
+    A quick inspection of the output identifies two \ttt{planeType} fields containing the same value.  This is a problem because we are interested in a single field containing the corrected spelling for Boeing.  We should remove one of them and removing the first one is the right choice because this first one is the one we have no control over.  The second \ttt{planeType} is the one we have full control because we are adding it!
+  }
+\item Remove the first \ttt{planeType} field
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var theTotalSeats=400
+    ---
+    payload..*return map {
+      ($ - "planeType"),
+      planeType: $.planeType,
+      totalSeats: theTotalSeats
+    }
+  \end{lstlisting}
+  \emph{
+    This unary \ttt{-} operator is overloaded to also apply to objects and remove fields.  You can keep applying it successively if you want to remove multiple fields--e.g. \ttt{\$ - "planeType" - "price"} 
+  }
+\item Fix the \ttt{Boing} typo
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var theTotalSeats=400
+    ---
+    payload..*return map {
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
+      totalSeats: theTotalSeats
+    }
+  \end{lstlisting}
+  \emph{
+    It is worth noting that \ttt{replace} and \ttt{with} are two separate functions where the result of \ttt{replace} is the first argument to \ttt{with}.  It makes the code ``talk to you in English''!  This is the beauty of infix function invocation. 
+  }
+\end{enumerate}
+
+%%%%%%
 \subsection{Calculate the total seats as a function of the \ttt{planeType} using \ttt{fun}}
 \begin{enumerate}[resume*]
 \item Create and apply a function and start unit-testing it
@@ -77,7 +135,8 @@
     fun getTotalSeats(pt) = pt
     ---
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeats($.planeType)
     }
   \end{lstlisting}
@@ -96,7 +155,8 @@
     fun getTotalSeats(pt) = pt contains "737"
     ---
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeats($.planeType)
     }
   \end{lstlisting}
@@ -107,7 +167,8 @@
     ) 150 else 300
     ---
     payload..*return map {
-      ($)
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeats($.planeType)
     }
   \end{lstlisting}
@@ -162,7 +223,8 @@
 \item Apply the function to in the expression and get results
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType)
     }
   \end{lstlisting}
@@ -232,14 +294,17 @@
 \item Apply the function in prefix syntax
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price,"EUR")
     }
   \end{lstlisting}
 \item Apply the function in infix syntax
   \begin{lstlisting}
-    payload..*return map { ($),
+    payload..*return map {
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price,"EUR"),
       priceGBP: $.price adjustFor "GBP"
@@ -268,9 +333,7 @@
 \item Click the radio button File and type \lstinline!dw/transforms/mod2/functions! in the text field to the right
 \item Click OK
   \emph {
-    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have
-    stored the DW code inside a new file under \lstinline!src/main/resources/dw/transforms/mod2! named
-    \lstinline!functions.dwl!
+    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have stored the DW code inside a new file under \lstinline!src/main/resources/dw/transforms/mod2! named \lstinline!functions.dwl!
   }
 \end{enumerate}
 
@@ -340,7 +403,8 @@
 \item Use the module by fully qualifying the function to adjust the price for the CAD currency
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price, "EUR"),
       priceGBP: $.price adjustFor "GBP",
@@ -354,10 +418,12 @@
 \item Use the module again this time by taking advantage of the \ttt{import} to adjust the price for AUD
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price, "EUR"),
       priceGBP: $.price adjustFor "GBP",
+      priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
       priceAUD: $.price Currency::adjustFor "AUD"
     }      
   \end{lstlisting}
@@ -368,10 +434,12 @@
 \item Use the module through the \ttt{Curr} alias next
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price, "EUR"),
       priceGBP: $.price adjustFor "GBP",
+      priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
       priceAUD: $.price Currency::adjustFor "AUD",
       priceMXN: $.price Curr::adjustFor "MXN"
     }
@@ -383,10 +451,12 @@
 \item Use directly the \ttt{adjustFor} function
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price, "EUR"),
       priceGBP: $.price adjustFor "GBP",
+      priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
       priceAUD: $.price Currency::adjustFor "AUD",
       priceMXN: $.price Curr::adjustFor "MXN",
       priceINR: $.price adjustFor "INR"
@@ -404,10 +474,12 @@
 \item Use the \ttt{adj4} alias
   \begin{lstlisting}
     payload..*return map {
-      ($),
+      ($ - "planeType"),
+      planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price, "EUR"),
       priceGBP: $.price adjustFor "GBP",
+      priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
       priceAUD: $.price Currency::adjustFor "AUD",
       priceMXN: $.price Curr::adjustFor "MXN",
       priceINR: $.price adj4 "INR"
@@ -415,7 +487,130 @@
   \end{lstlisting}
 \end{enumerate}  
 
+%%
+%%
+%%
+
+\section{Optional: Calculate KPIs using the Arrays Module}
+
+
 %%%%%%
+\subsection{Inspect the Arrays module in the Documentation}
+\begin{enumerate}
+\item Navigate to the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-arrays}{Arrays module page} in the documentation
+\item Visit the \ttt{countBy} function documentation and understand the signature
+\item Visit the \ttt{every} function documentation and understand the signature
+\item Visit the \ttt{some} function documentation and understand the signature
+\item Visit the \ttt{sumBy} function documentation and understand the signature
+\end{enumerate}
+
 %%%%%%
+\subsection{Add the KPI section}
+\begin{enumerate}[resume*]
+\item Add an object and set the record of flights to the object's \ttt{data} field
+  \begin{lstlisting}
+    {
+      data: payload..*return map {
+	($ - "planeType"),
+	planeType: $.planeType replace /Boing/ with "Boeing",
+	totalSeats: getPlaneTypeL($.planeType),
+	priceEUR: adjustFor($.price,"EUR"),
+	priceGBP: $.price adjustFor "GBP",
+	priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
+	priceAUD: $.price Currency::adjustFor "AUD",
+	priceMXN: $.price Curr::adjustFor "MXN",
+	priceINR: $.price adj4 "INR"
+      }
+      
+    }
+  \end{lstlisting}
+\item Add an \ttt{kpi} field above the \ttt{data} field and assign an empty object to it
+  \begin{lstlisting}
+    {
+      kpi: {
+	
+      },
+      data: payload..*return map {
+	($ - "planeType"),
+	planeType: $.planeType replace /Boing/ with "Boeing",
+	totalSeats: getPlaneTypeL($.planeType),
+	priceEUR: adjustFor($.price,"EUR"),
+	priceGBP: $.price adjustFor "GBP",
+	priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
+	priceAUD: $.price Currency::adjustFor "AUD",
+	priceMXN: $.price Curr::adjustFor "MXN",
+	priceINR: $.price adj4 "INR"
+      }
+    }
+  \end{lstlisting}
+  \emph{
+    We will use this new field to store the calculated KPIs in subsequent steps of this WT.
+  }
+\end{enumerate}
+
 %%%%%%
+\subsection{Assert all flights are Delta operated}
+\begin{enumerate}[resume*]
+\item Import the \ttt{Arrays} module
+  \begin{lstlisting}
+    import every,some,countBy,sumBy from dw::core::Arrays
+  \end{lstlisting}
+\item Use the \ttt{every} function to assert whether all flights are Delta operated
+  \begin{lstlisting}
+    kpi: {
+      allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta"
+    },
+  \end{lstlisting}
+  \emph{
+    You may want to refactor your code so that you execute \ttt{payload..*return} once.  You already have seen how to do it, consider it a bonus exercise.
+  }
+\end{enumerate}
+
 %%%%%%
+\subsection{Assert the existence of full flights}
+\begin{enumerate}[resume*]
+\item Use the \ttt{some} to assert whether there are any full flights
+  \begin{lstlisting}
+    kpi: {
+      allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
+      anyFullFlights: payload..*return some ($.emptySeats == 0)
+    },
+  \end{lstlisting}
+  \emph{
+    The result is \ttt{false}, i.e. there are no full flights.  However, the second to last flight is a full flight because the \ttt{emptySeats} tag is set to 0.  The problem lies with the comparison--we are comparing a string with a number.  You can either use a type cast to \ttt{\$.emptySeats as Number == 0} or the equality operator \ttt{\textasciitilde=} that autocasts its arguments.
+  }
+\item Use the operator \ttt{\textasciitilde=} to fix the \ttt{Boolean} condition
+  \begin{lstlisting}
+    kpi: {
+      allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
+      anyFullFlights: payload..*return some ($.emptySeats ~= 0)
+    },
+  \end{lstlisting}
+\end{enumerate}
+
+%%%%%%
+\subsection{Calculate the number of full flights}
+\begin{enumerate}[resume*]
+\item Calculate the number of full flights
+  \begin{lstlisting}
+    kpi: {
+      allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
+      anyFullFlights: payload..*return some ($.emptySeats ~= 0),
+      fullFlightsCount: payload..*return countBy ($.emptySeats ~= 0)
+    },
+  \end{lstlisting}
+\end{enumerate}
+
+%%%%%%
+\subsection{Sum the total number of empty seats across all flights}
+\begin{enumerate}[resume*]
+\item Sum up all the \ttt{emptySeats} across all flights
+  \begin{lstlisting}
+    kpi: {
+      allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
+      anyFullFlights: payload..*return some ($.emptySeats ~= 0),
+      fullFlightsCount: payload..*return countBy ($.emptySeats ~= 0),
+      totalEmptySeats: payload..*return sumBy $.emptySeats
+    },    
+  \end{lstlisting}
+\end{enumerate}
