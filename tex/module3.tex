@@ -72,10 +72,10 @@
     fun dataMatcher(n: Null) = "Null found"
     ---
     dataMatcher([])
-    \emph{
-      You are now getting errors because our function is not defined to accept arrays.
-    }
   \end{lstlisting}
+  \emph{
+    You are now getting errors because our function is not defined to accept arrays.
+  }
 \item Overload the function to also accept arrays
   \begin{lstlisting}
     %dw 2.0
@@ -130,19 +130,159 @@
 %%%%%%
 \subsection{Matching literals}
 \begin{enumerate}
-\item ...
+\item Stay under the \ttt{mod3-data-matcher} flow
+\item Delete the current expression
+\item Use the \ttt{match} operator to match \ttt{Null} values
+  \begin{lstlisting}
+    null match {
+      case null -> "Null found"
+    }
+  \end{lstlisting}
+  \emph{
+    This is the \ttt{match} operator, not to be confused with the \ttt{match} function.
+  }
+\item Match the number 10
+  \begin{lstlisting}
+    10 match {
+      case null -> "Null found"
+      case 10 -> "Ten"
+    }
+  \end{lstlisting}
+  \emph{
+    Cases are evaluated in order of appearance, ensure more general cases are below the more specific ones.
+  }
+\item Match the string ``ABC''
+  \begin{lstlisting}
+    "ABC" match {
+      case null -> "Null found"
+      case 10 -> "Ten"
+      case "ABC" -> "Alphabet"
+    }
+  \end{lstlisting}
+\item Match the empty array
+  \begin{lstlisting}
+    [] match {
+      case null -> "Null found"
+      case 10 -> "Ten"
+      case "ABC" -> "Alphabet"
+      case [] -> "Empty array found"
+    }
+  \end{lstlisting}
+\item Match the empty object
+  \begin{lstlisting}
+    {} match {
+      case null -> "Null found"
+      case 10 -> "Ten"
+      case "ABC" -> "Alphabet"
+      case [] -> "Empty array found"
+      case {} -> "Empty object found"
+    }
+  \end{lstlisting}
+\item Add elements to the object
+  \begin{lstlisting}
+    {a: 1} match {
+      case null -> "Null found"
+      case 10 -> "Ten"
+      case "ABC" -> "Alphabet"
+      case [] -> "Empty array found"
+      case {} -> "Empty object found"
+    }
+  \end{lstlisting}
+  \emph{
+    We are getting errors because there is no case matching this expression.
+  }
+  \newline
+  \emph{
+    There is no way to match inner data of objects and arrays directly in a case--i.e. adding inner data at the case level will only result in syntax errors.
+  }
+\item Add the default case for when there is no case matching your data
+  \begin{lstlisting}
+    {a: 1} match {
+      case null -> "Null found"
+      case 10 -> "Ten"
+      case "ABC" -> "Alphabet"
+      case [] -> "Empty array found"
+      case {} -> "Empty object found"
+      else -> {message: "No match", data: $}
+    }
+  \end{lstlisting}
+  \emph{
+    In the body of the \ttt{else} case we are back-referencing our data with a single \ttt{\$}.  We can back-reference our data in all other cases in the same way.  Further along we shall see how to define our own placeholder to back-reference our data so that we don't depend on a single \ttt{\$}
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{Matching types}
+\emph{
+  Lets use pattern matching to replicate what've done during function overloading.
+}
 \begin{enumerate}[resume*]
-\item ...
+\item Remove or comment-out the expression
+\item Match the \ttt{Null} type
+  \begin{lstlisting}
+    null match {
+      case is Null -> "Null found"
+      else -> $
+    }
+  \end{lstlisting}
+  \emph{
+    The \ttt{is} operator is used in the first case to match all values of type \lstinline{Null}.
+  }
+  \newline
+  \emph{
+    We pro-actively set the default case to just evaluate back to the expression we are matching.
+  }
+\item Match \lstinline{Number}, \lstinline{String}, \lstinline{Object}, and lstinline{Array} types
+  \begin{lstlisting}
+    [] match {
+      case is Null -> {message: "Null found", data: $}
+      case is Number -> {message: "Number found", data: $}
+      case is String -> {message: "String found", data: $}
+      case is Object -> {message: "Object found", data: $}
+      case is Array -> {message: "Array found", data: $}
+      else -> {message: "No match", data: $}
+    }
+  \end{lstlisting}
+  \emph{
+    We are back-referencing the values we are matching using the \ttt{\$} for all our cases.
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{Matching by any condition}
 \begin{enumerate}[resume*]
-\item ...
+\item Replace the \ttt{\$} with a placeholder of our own choosing
+  [1] match {
+    case n if (n is Null) -> {message: "Null found", data: n}
+    case n if (n is Number) -> {message: "Number found", data: n}
+    case s if (s is String) -> {message: "String found", data: s}
+    case o if (o is Object) -> {message: "Object found", data: o}
+    case a if (a is Array) -> {message: "Array found", data: a}
+    else other -> {message: "No match", data: other}
+  }
+  \emph{
+    These new placeholders can anything of your choosing--i.e. they are arbitrary.
+  }
+  \newline
+  \emph{
+    Using this new systax to define our placeholders and conditionals opens an unlimited set of boolean expressions that could be defined on a per case basis.
+  }
+\item Define a pattern matching that deals with the empty array, the array that has less than or equal to 100 elements, and the array that has larger than 100 elements
+  \begin{lstlisting}
+    (0 to 200) match {
+      case [] -> "Empty Array" 
+      case a if (a is Array and sizeOf(a) <= 100) -> "Non-empty array with less or equal to 100 elements"
+      else a -> "Non-empty array with larger than 100 elements"
+    }
+  \end{lstlisting}
+  \emph{
+    For this use case we combine all of the above:
+    \begin{itemize}
+    \item Literal pattern matching for the \ttt{[]}
+    \item Conditional pattern matching on typing with \lstinline{and} clauses
+    \item The default case for all else.
+    \end{itemize}
+  }
 \end{enumerate}
 
 
