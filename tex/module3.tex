@@ -8,21 +8,119 @@
 %%%%%%
 \subsection{Create a new flow}
 \begin{enumerate}
-\item ...
+\item Create a new Mule Configuration file and name it \ttt{mod3}
+\item Create a new flow named \ttt{mod3-data-matcher}
+\item Drop a DW to the process area of the flow
+\item Turn on the preview
+\item Switch to the Source Only view
+\item Change the output to \ttt{application/dw}
 \end{enumerate}
 
 %%%%%%
 \subsection{Nullity and function signatures}
 \begin{enumerate}[resume*]
-\item ...
+\item Replace the expression with \ttt{typeOf(null)}
+  \emph{
+    By looking at the preview we can quickly realize that DW's typing system separates nullity from all other types.  The benefit of such separation is that you can catch a good chunk of nullity errors at compile time. 
+  }
+\item Replace the expression with just \ttt{sizeOf}
+\item Examine the signature in the preview
+  \begin{lstlisting}
+    (arg0:Array | Object | Binary | String) -> ???
+  \end{lstlisting}
+  \emph{
+    \ttt{sizeOf} expects a single argument.  This argument can be one of listed types separated by a pipe symbol (\ttt{|}).  This \ttt{|} indicates that this function has been overloaded.
+  }
+  \newline
+  \emph{
+    Only through \ttt{application/dw} can we see the signature of functions. 
+  }
+\item Replace the expression with just \ttt{map}
+\item Examine the signature in the preview
+  \begin{lstlisting}
+    (arg0:Array | Null, arg1:Function | Function) -> ???
+  \end{lstlisting}
+  \emph{
+    \ttt{map} is also an overloaded function, but this time it is a function that takes two arguments.  If we were to reconstruct these overloaded functions defining \ttt{map} then we can tell (1) that there are two overloaded functions because we have a single pipe separating the types of the arguments and (2) the arguments of these overloaded functions will look as follows by using the position of the corresponding arguments:
+    \begin{itemize}
+    \item \lstinline{map(Array,Function)} -- i.e. \ttt{Array} will match with the first \ttt{Function}
+    \item \lstinline{map(Null, Function)} -- i.e. \ttt{Null} will match with the second \ttt{Function}
+    \end{itemize}
+  }
 \end{enumerate}
 
 %%%%%%
-\subsection{Overload the function}
+\subsection{Overload a function}
 \begin{enumerate}[resume*]
-\item ...
+\item Create a function that accepts the \ttt{Null} type
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    fun dataMatcher(n: Null) = "Null found"
+    ---
+    dataMatcher(null)
+  \end{lstlisting}
+  \emph{
+    The \ttt{:} separates the name of the argument with the type of the argument.  The same type of syntax can be used to specify types when needed.
+    \newline
+    You have created a function that takes only null values.
+  }
+\item Pass an empty array instead
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    fun dataMatcher(n: Null) = "Null found"
+    ---
+    dataMatcher([])
+    \emph{
+      You are now getting errors because our function is not defined to accept arrays.
+    }
+  \end{lstlisting}
+\item Overload the function to also accept arrays
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    fun dataMatcher(n: Null) = "Null found"
+    fun dataMatcher(a: Array) = "Array found"
+    ---
+    dataMatcher([])
+  \end{lstlisting}
+  \emph{
+    Only a function declared through \lstinline{fun} can be overloaded--in other words you cannot overload \lep
+  }
+\item Display the signature of the \ttt{dataMatcher} function
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    fun dataMatcher(n: Null) = "Null found"
+    fun dataMatcher(a: Array) = "Array found"
+    ---
+    dataMatcher
+  \end{lstlisting}
+\item Examine the signature
+  \begin{lstlisting}
+    (arg0:Null | Array) -> ???
+  \end{lstlisting}
+  \emph{
+    The signature clearly show the types the function accepts.
+  }
+\item Overload the function for \lstinline{Object}, \lstinline{Number}, and \lstinline{String}
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    fun dataMatcher(n: Null) = "Null found"
+    fun dataMatcher(a: Array) = "Array found"
+    fun dataMatcher(o: Object) = "Object found"
+    fun dataMatcher(n: Number) = "Number found"
+    fun dataMatcher(s: String) = "String found"
+    ---
+    dataMatcher
+  \end{lstlisting}
+\item Examine the signature one last time
+  \begin{lstlisting}
+    (arg0:Null | Array | Object | Number | String) -> ???
+  \end{lstlisting}
 \end{enumerate}
-
 
 %%
 %%
