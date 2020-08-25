@@ -214,7 +214,7 @@
 %%%%%%
 \subsection{Matching types}
 \emph{
-  Lets use pattern matching to replicate what've done during function overloading.
+  Lets use pattern matching to replicate function overloading from before.
 }
 \begin{enumerate}[resume*]
 \item Remove or comment-out the expression
@@ -232,7 +232,7 @@
   \emph{
     We pro-actively set the default case to just evaluate back to the expression we are matching.
   }
-\item Match \lstinline{Number}, \lstinline{String}, \lstinline{Object}, and lstinline{Array} types
+\item Match \lstinline{Number}, \lstinline{String}, \lstinline{Object}, and \lstinline{Array} types
   \begin{lstlisting}
     [] match {
       case is Null -> {message: "Null found", data: $}
@@ -252,22 +252,24 @@
 \subsection{Matching by any condition}
 \begin{enumerate}[resume*]
 \item Replace the \ttt{\$} with a placeholder of our own choosing
-  [1] match {
-    case n if (n is Null) -> {message: "Null found", data: n}
-    case n if (n is Number) -> {message: "Number found", data: n}
-    case s if (s is String) -> {message: "String found", data: s}
-    case o if (o is Object) -> {message: "Object found", data: o}
-    case a if (a is Array) -> {message: "Array found", data: a}
-    else other -> {message: "No match", data: other}
-  }
+  \begin{lstlisting}
+    [1] match {
+      case n if (n is Null) -> {message: "Null found", data: n}
+      case n if (n is Number) -> {message: "Number found", data: n}
+      case s if (s is String) -> {message: "String found", data: s}
+      case o if (o is Object) -> {message: "Object found", data: o}
+      case a if (a is Array) -> {message: "Array found", data: a}
+      else other -> {message: "No match", data: other}
+    }
+  \end{lstlisting}
   \emph{
-    These new placeholders can anything of your choosing--i.e. they are arbitrary.
+    These new placeholders are arbitrary, they can be anything of your choosing, from single letter to words--very similar to declaring variables.
   }
   \newline
   \emph{
-    Using this new systax to define our placeholders and conditionals opens an unlimited set of boolean expressions that could be defined on a per case basis.
+    Using this new syntax to define our placeholders and conditionals opens an unlimited set of Boolean expressions that could be defined on a per case basis.
   }
-\item Define a pattern matching that deals with the empty array, the array that has less than or equal to 100 elements, and the array that has larger than 100 elements
+\item Use pattern matching to distinguish the empty array, the array that has less than or equal to 100 elements, and the array that has larger than 100 elements
   \begin{lstlisting}
     (0 to 200) match {
       case [] -> "Empty Array" 
@@ -294,25 +296,128 @@
 %%%%%%
 \subsection{Create a new flow}
 \begin{enumerate}
-\item ...
+\item Create a new Mule Configuration file and name it \ttt{mod3}
+\item Create a new flow named \ttt{mod3-errors}
+\item Drop a DW to the process area of the flow
+\item Turn on the preview
+\item Switch to the Source Only view
+\item Change the output to \ttt{application/dw}
 \end{enumerate}
 
 %%%%%%
 \subsection{The error 10 / 0}
 \begin{enumerate}[resume*]
-\item ...
+\item Introduce an error
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    10 / 0
+  \end{lstlisting}
+  \emph{
+    When the evaluation of DW expressions result in errors the whole expression will errors out, there are no partial results
+  }
+  \newline
+  \emph{
+    Imagine scenarios where we are working with sequences or records where some of these records our malformed, DW expressions will not provide you with partial results, instead the full expression will error out.  This is where error handling is needed.
+  }
 \end{enumerate}
 
 %%%%%%
-\subsection{\ttt{dw::Runtime::try} function documentation}
+\subsection{\ttt{dw::Runtime::try} function}
 \begin{enumerate}[resume*]
-\item ...
-\end{enumerate}
+\item Navigate to the \href{https://docs.mulesoft.com/mule-runtime/4.3/dataweave}{Dataweave documentation}
+\item Examine the signature of the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-functions-try}{\lstinline{dw::Runtime::try}} function found in the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-functions}{Dataweave Reference} section
+  \newline
+  \emph{
+    The \ttt{dw::Runtime::try} function takes a single argument.  The argument is a \les{} that takes no arguments itself.  The body of this \les{} is the expression that we want to evaluate for errors.
+  }
+  \newline
+  \emph{
+    This \les{} is also called as a delegate function because through it we are delegating the execution of an expression to \ttt{dw::Runtime::try} function.  The latter will determine whether our expression has errors or not.
+  }
+  \newline
+  \emph{
+    The return value is a \ttt{TryResult<T>} structure.  Thankfully, we have \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-types}{documentation} that describes this structure.
+  }
+\item Test the \ttt{10 / 0} expression
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    dw::Runtime::try(() -> 10 / 0)
+  \end{lstlisting}
+\item Examine the result
+  \begin{lstlisting}
+    {
+      success: false,
+      error: {
+        kind: "DivisionByZeroException",
+        message: "Division by zero",
+        location: "\n4| dw::Runtime::try(() -> 10 / 0)\n                          ^^^^^^",
+        stack: [
+          "main (anonymous:4:24)"
+        ]
+      }
+    }
+  \end{lstlisting}
+  \emph{
+    We no longer have errors preventing us from getting results in the preview.  Instead we are looking at a \ttt{TryResult} structure where the \ttt{success} field is set to \ttt{false} indicating that our expression has errors.  Finally the error's description can be seen in the \ttt{error} field.
+  }
+\item Test the \ttt{10 / 2} expression
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    dw::Runtime::try(() -> 10 / 2)
+  \end{lstlisting}
+\item Examine the result
+  \begin{lstlisting}
+    {
+      success: true,
+      result: 5.0
+    }
+  \end{lstlisting}
+  \emph{
+    Similarly we have \ttt{success} set to \ttt{true} but instead of \ttt{error} we have the \ttt{result} field set to the value our expression evaluates to.
+  }
 
+\end{enumerate}
+  
 %%%%%%
 \subsection{The \ttt{guard} function}
 \begin{enumerate}[resume*]
-\item ...
+\item Chain the \ttt{match} operator
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    dw::Runtime::try(() -> 10 / 0) match {
+      case tr if (tr.success) -> tr.result
+      else tr -> tr.error.message
+    }
+  \end{lstlisting}
+  \emph{
+    When \ttt{success} is set to \ttt{true} just return the \ttt{result} otherwise arbitrarily just return the \ttt{error.message} 
+  }
+\item Extrapolate to a function that guards against errors
+  \begin{lstlisting}
+    var guard = (fn) -> dw::Runtime::try( fn ) match {
+      case tr if (tr.success) -> tr.result
+      else tr -> tr.error.message
+    }
+  \end{lstlisting}
+  \emph{
+    There is no need for a \ttt{guard} function.  There are additional error handling functions that we shall see further along the material that provide for complete and flexible error handling.  Nonetheless, going through the refactoring of our code into a function allows us to take a peek on functional programming.
+  }
+\item Test the \ttt{guard} function with a correct expression
+  \begin{lstlisting}
+    guard( () -> 10 / 2 )
+  \end{lstlisting}
+\item Test the \ttt{guard} function with an erroneous expression
+  \begin{lstlisting}
+    guard( () -> 10 / 0 )
+  \end{lstlisting}  
 \end{enumerate}
 
 
@@ -320,3 +425,69 @@
 %%
 %%
 \section{Optional: Partial Results}
+\emph{
+  Let’s see how we can get partial results now that we know how to capture errors.
+  How many times you had your DW code fail because one or very few records were malformed?
+  We will replicate such a scenario by creating an array containing the string representation of dates and then casting them into a date type. One of our dates will be malformed
+}
+
+%%%%%%
+\subsection{List of String Dates}
+\begin{enumerate}
+\item Stay in the \ttt{mod3-errors} flow
+\item Create an array of string dates and assigned it in a variable
+  \begin{lstlisting}
+    var dates = [
+      "2020/01/01",
+      "20100101",
+      "2000/01/01"
+    ]
+  \end{lstlisting}
+  \emph{
+    It is the second date that is malformed and it is the cause of failure of our transformation.
+  }
+\item Remove or comment out the current expression
+\item Iterate over dates and cast into a \ttt{Date} type
+  \begin{lstlisting}
+    dates map (
+      $ as Date {format: "yyyy/MM/dd"}
+    )
+  \end{lstlisting}
+  \emph{
+    There is an error thrown telling us that the second-string date cannot be casted.
+  }
+\end{enumerate}
+
+%%%%%%
+\subsection{Using \ttt{guard} and obtaining partial results}
+\begin{enumerate}[resume*]
+\item Delegate the execution of the type-casting expression to the \ttt{guard} function
+  \begin{lstlisting}
+    dates map (
+      guard( () -> $ as Date {format: "yyyy/MM/dd"} )
+    ) 
+  \end{lstlisting}
+\item Finally \ttt{filter} for \ttt{Date} types and get your partial results while ignoring the rest
+  \begin{lstlisting}
+    dates map (
+      guard( () -> $ as Date {format: "yyyy/MM/dd"} )
+    )
+    filter ($ is Date)
+  \end{lstlisting}
+\item We can expand on this solution such that we also obtain the errors
+  \begin{lstlisting}
+    do {
+      var parsedDates = dates map (
+      guard( () -> $ as Date {format: "yyyy/MM/dd"} )
+      )
+      ---
+      {
+	success: parsedDates filter ($ is Date),
+	failure: parsedDates filter  not ($ is Date)
+      }
+    }
+  \end{lstlisting}
+  \emph{
+    Note to instructors: This is a good exercise to have students work on their own for ``bonus points'', after all we have already covered all topics they need to know to get it done.
+  }
+\end{enumerate}
