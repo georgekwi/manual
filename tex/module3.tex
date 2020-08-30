@@ -19,7 +19,13 @@
 %%%%%%
 \subsection{Nullity and function signatures}
 \begin{enumerate}[resume*]
-\item Replace the expression with \ttt{typeOf(null)}
+\item Explore nullity
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    typeOf(null)
+  \end{lstlisting}
   \emph{
     By looking at the preview we can quickly realize that DW's typing system separates nullity from all other types.  The benefit of such separation is that you can catch a good chunk of nullity errors at compile time. 
   }
@@ -280,9 +286,9 @@
   \emph{
     For this use case we combine all of the above:
     \begin{itemize}
-    \item Literal pattern matching for the \ttt{[]}
-    \item Conditional pattern matching on typing with \lstinline{and} clauses
-    \item The default case for all else.
+    \item Literal pattern matching for the empty array
+    \item Conditional pattern matching on the type and size
+    \item The default case for all other arrays
     \end{itemize}
   }
 \end{enumerate}
@@ -315,16 +321,16 @@
     10 / 0
   \end{lstlisting}
   \emph{
-    When the evaluation of DW expressions result in errors the whole expression will errors out, there are no partial results
+    When the evaluation of DW expressions result in errors the whole expression errors out--there are no partial results
   }
   \newline
   \emph{
-    Imagine scenarios where we are working with sequences or records where some of these records our malformed, DW expressions will not provide you with partial results, instead the full expression will error out.  This is where error handling is needed.
+    Imagine scenarios where we are working with sequences or records where some of these records our malformed, DW expressions will not provide you with partial results, instead the full expression will error out.  Error handling will allow for such partial results.
   }
 \end{enumerate}
 
 %%%%%%
-\subsection{\ttt{dw::Runtime::try} function}
+\subsection{The \ttt{dw::Runtime::try} function}
 \begin{enumerate}[resume*]
 \item Navigate to the \href{https://docs.mulesoft.com/mule-runtime/4.3/dataweave}{Dataweave documentation}
 \item Examine the signature of the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-functions-try}{\lstinline{dw::Runtime::try}} function found in the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-functions}{Dataweave Reference} section
@@ -334,7 +340,7 @@
   }
   \newline
   \emph{
-    This \les{} is also called as a delegate function because through it we are delegating the execution of an expression to \ttt{dw::Runtime::try} function.  The latter will determine whether our expression has errors or not.
+    This \les{} is also referenced as a delegate function because through it we are delegating the execution of an expression to \ttt{dw::Runtime::try} function.  The latter will determine whether our expression has errors or not.
   }
   \newline
   \emph{
