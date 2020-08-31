@@ -18,11 +18,18 @@ The JSON data structure is enhanced as follows:
 \begin{enumerate}
 \item Create a new Mule Configuration file and name it \ttt{mod2}, it will contain the solutions to all WTs from module 2.
 \item Create a new flow named \ttt{mod2-functions}
+\item Drop a DW to the process area of the flow
 \item Define the payload input metadata to the flights\_xml
 \item Edit the sample data
 \item Turn on the preview
 \item Change the output to \ttt{application/dw}
-\item Change the body of the expression to \ttt{payload..*return}
+\item Change the body of the expression to
+  \begin{lstlisting}
+    %dw 2.0
+    output application/json
+    ---
+    payload..*return
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%

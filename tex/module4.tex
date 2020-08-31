@@ -1,11 +1,11 @@
 \chapter{Flights and Airports}
 
-In this module we work on the main use-case of the class.  This use-case entails combining flights with airports and tranforming the data such that are communicated with external systems. The tasks we shall perform are as follows:
+In this module we work on the main use-case of the class.  This use-case entails combining flights with airports and transforming the data such that are communicated with external systems. The tasks we shall perform are as follows:
 \begin{itemize}
 \item Dynamically rename fields
 \item Combine data from two sources
 \item Explore in more detail functional programming
-\item Optimize your code in the absense of profiling tools
+\item Optimize your code in the absence of profiling tools
 \item Reorder objects to meet legacy system criteria
 \item Traverse and transform any type of structured data
 \end{itemize}
@@ -22,27 +22,109 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \item Create a new Mule Configuration file and name it \ttt{mod4}
 \item Create a new flow named \ttt{mod4-flights-airports}
 \item Drop a DW to the process area of the flow
+\item Define the payload input metadata to  \ttt{flights\_json}
+\item Edit the sample data
 \item Turn on the preview
-\item Switch to the Source Only view
 \item Change the output to \ttt{application/dw}
 \end{enumerate}
 
 %%%%%%
 \subsection{Create the map}
 \begin{enumerate}[resume*]
-\item ...
+\item Create a variable, \ttt{fs2fs}, that contains a map from source field names to target field names
+  \begin{lstlisting}
+    var fs2rn = {
+      airlineName: "carrier",
+      departureDate: "date",
+      emptySeats: "seats",
+      planeType: "plane"
+    }
+  \end{lstlisting}
+  \emph{
+    I do know we can just do it in-place as part of the lambda expression of a \ttt{map} function. Creating the variable will allow to show how it can be done dynamically.  I could easily pass such a map through an HTTP request, read it from a file, etc.
+  }
+  \newline
+  \emph{
+    What we need to do is iterate over an object!
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{The \ttt{mapObject} function}
 \begin{enumerate}[resume*]
-\item ...
+\item Access the first object
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    
+    var fs2rn = {
+      airlineName: "carrier",
+      departureDate: "date",
+      emptySeats: "seats",
+      planeType: "plane"
+    }
+    ---
+    payload[0]
+  \end{lstlisting}
+\item Visit the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-mapobject}{\ttt{mapObject} documentation page} and explore its signature.  Focus on the return type of the \les{}.
+\item Iterate over the object and return the empty object form the \les
+  \begin{lstlisting}
+    payload[0] mapObject (v,k,i) -> {}
+  \end{lstlisting}
+  \emph{
+    Notice the result in the preview, it is also an empty object.  \ttt{mapObject} invokes the \les{} once for every single pair of key and value in order of appearance.  The result of \ttt{mapObject} is the concatenated objects returned from the \les.
+  }
+\item Reform the object
+  \begin{lstlisting}
+    payload[0] mapObject (v,k,i) -> {k: v}
+  \end{lstlisting}
+\item Examine the preview
+  \begin{lstlisting}
+    {
+      k: "Delta",
+      k: "A1B2C3",
+      k: "2018/03/20",
+      k: "SFO",
+      k: "40",
+      k: "MUA",
+      k: "Boing 737",
+      k: "400.0"
+    }
+  \end{lstlisting}
+  \emph{
+    Notice that the values are being reformed, that is the \ttt{v} is evaluated, while the keys, \ttt{k}, is displayed verbatim.
+  }
+\item Force the evaluation of the field name
+  \begin{lstlisting}
+    payload[0] mapObject (v,k,i) -> {(k): v}
+  \end{lstlisting}
+  \emph{
+    We must enclose the key inside \ttt{()} to force its evaluation.  It is how the language works to facilitate the creation of fields--on the one hand we don't have to make excessive use of quotes enclosing the hard-coded fields while on the other we must enclose the keys inside parenthesis when dynamically evaluating them.
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{Change the field names}
 \begin{enumerate}[resume*]
-\item ...
+\item Dynamically evaluate the key based upon the \ttt{fs2rn} map for a single object
+  \begin{lstlisting}
+    payload[0] mapObject (v,k,i) -> {(fs2rn[k]): v}
+  \end{lstlisting}
+\item Examine the error: \ttt{Cannot coerce Null (null) to Key}
+  \newline
+  \emph{
+    The error is due to keys not appearing in the \ttt{fs2rn} map.  For example, \ttt{code}, \ttt{price}, etc.
+  }
+\item Accommodate for unchanged keys
+  \begin{lstlisting}
+    payload[0] mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+  \end{lstlisting}
+\item Change the field names for all objects in the array
+  \begin{lstlisting}
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+  \end{lstlisting}
 \end{enumerate}
 
 %%
@@ -95,7 +177,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 %%
 %%
 %%
-\section{Reording fields}
+\section{Reordering fields}
 
 %%%%%%
 \subsection{Create a new flow}
