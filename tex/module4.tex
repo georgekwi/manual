@@ -1,1 +1,134 @@
 \chapter{Flights and Airports}
+
+In this module we work on the main use-case of the class.  This use-case entails combining flights with airports and tranforming the data such that are communicated with external systems. The tasks we shall perform are as follows:
+\begin{itemize}
+\item Dynamically rename fields
+\item Combine data from two sources
+\item Explore in more detail functional programming
+\item Optimize your code in the absense of profiling tools
+\item Reorder objects to meet legacy system criteria
+\item Traverse and transform any type of structured data
+\end{itemize}
+In fact, the remainder of the class makes use of this use-case.  We shall still apply unit-testing to solve smaller issues before we integrate the unit-tested expressions in our main transformation. 
+
+%%
+%%
+%%
+\section{Change field names}
+
+%%%%%%
+\subsection{Create a new flow}
+\begin{enumerate}
+\item Create a new Mule Configuration file and name it \ttt{mod4}
+\item Create a new flow named \ttt{mod4-flights-airports}
+\item Drop a DW to the process area of the flow
+\item Turn on the preview
+\item Switch to the Source Only view
+\item Change the output to \ttt{application/dw}
+\end{enumerate}
+
+%%%%%%
+\subsection{Create the map}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{The \ttt{mapObject} function}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Change the field names}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%
+%%
+%%
+\section{Combine flights and airports}
+
+%%%%%%
+\subsection{Explore the CSV file}
+\begin{enumerate}
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Parse the CSV airports}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Inject the airport to each flight}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Functions as values}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Curried functions}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{A more efficient transformation}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Clean up the data}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%
+%%
+%%
+\section{Reording fields}
+
+%%%%%%
+\subsection{Create a new flow}
+\begin{enumerate}
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{The \ttt{pluck} function}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{The \ttt{pluck} function}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{The \ttt{reduce} function}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Re-ordering fields}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
+
+%%%%%%
+\subsection{Integrate field re-ordering to our main use-case}
+\begin{enumerate}[resume*]
+\item ...
+\end{enumerate}
