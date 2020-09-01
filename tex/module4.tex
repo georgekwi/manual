@@ -207,7 +207,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     distinctBy $.IATA
   \end{lstlisting}
   \emph{
-    \ttt{IATA} stands for Internation Air Transport Association and its values are standardized across the industry to be unique codes identifying airports.  As such we make use of just this value to create a set out the collection--i.e. get the unique values.
+    \ttt{IATA} stands for International Air Transport Association and its values are standardized across the industry to be unique codes identifying airports.  As such we make use of just this value to create a set out the collection--i.e. get the unique values.
   }
 \item Incorporate the code in the \ttt{mod4-flights-airports} flow
   \begin{lstlisting}
@@ -240,19 +240,172 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 %%%%%%
 \subsection{Inject the airport to each flight}
 \begin{enumerate}[resume*]
-\item ...
+\item Chain another \ttt{map} function
+  \begin{lstlisting}
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      
+    }
+  \end{lstlisting}
+  \emph{
+    There is no need for another chained \ttt{map} function, can can embed the combination of the data in a single iteration.  However, since we are in training clarity takes precedence vs performance.
+  }
+\item Reintroduce the fields from the previous map
+  \begin{lstlisting}
+    map {
+      ($)
+    }
+  \end{lstlisting}
+\item Add the \ttt{airport} field and assign to it all airports
+  \begin{lstlisting}
+    map {
+      ($),
+      airport: airports
+    }
+  \end{lstlisting}
+\item Nest \ttt{filter} to search for the \ttt{SFO} airport
+  \begin{lstlisting}
+    map {
+      ($),
+      airport: airports filter ($.IATA == "SFO")
+    }
+  \end{lstlisting}
+\item Dynamically make use of the flight's \ttt{destination} field to search the airports
+  \begin{lstlisting}
+    map {
+      ($),
+      airport: airports filter ($.IATA == $.destination)
+    }
+  \end{lstlisting}
+\item Examine the output in the preview
+  \begin{lstlisting}
+    [
+      {
+        carrier: "Delta",
+        code: "A1B2C3",
+        date: "2018/03/20",
+        destination: "SFO",
+        seats: "40",
+        origin: "MUA",
+        plane: "Boing 737",
+        price: "400.0",
+        airport: []
+      },
+      ...
+    ]
+  \end{lstlisting}
+  \emph{
+    Notice the empty data when earlier we were displaying the SFO record.  The reason for this is because we have nested a filter right inside a map function and we choose to make use of the \ttt{\$} placeholders in both cases!
+  }
+\item Change \ttt{filter}'s \les{} argument names fixing the transformation
+  \begin{lstlisting}
+    map {
+      ($),
+      airport: airports filter  (e) -> (e.IATA == $.destination)
+    }
+  \end{lstlisting}
+  \emph{
+    Not only we fixed our transformation by combining each flight with an airport record we also fixed the airport record that is associated with a flight to match the flight's record \ttt{destination} field value.
+  } 
 \end{enumerate}
 
 %%%%%%
 \subsection{Functions as values}
 \begin{enumerate}[resume*]
-\item ...
+\item Create and apply a function that does the filtering
+  \begin{lstlisting}
+    var filterAirportsByIATA = (dest) -> airports filter ($.IATA == dest)
+    ---
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      ($),
+      airport: filterAirportsByIATA($.destination)
+    }
+  \end{lstlisting}
+  \emph{
+    For the most part the name of this functions gives away that every single aspect is hard-coded, apart from the IATA code passed to the \ttt{dest} argument.
+  }
+\item Create and apply a ``naive'' generic filter function
+  \begin{lstlisting}
+    var filterAirportsByIATA = (dest) -> airports filter ($.IATA == dest)
+    var genericFilter = (a,f,v) -> a filter ($[f] == v)
+    ---
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      ($),
+      airport: genericFilter(airports,"IATA",$.destination)
+    }
+  \end{lstlisting}
+  \emph{
+    This is a naive version of a generic filter because we have hard-coded the condition!  A generic filter function should be able to take any kind of a \ttt{Boolean} condition and filter records of data.
+  }
+\item Rename the \ttt{genericFilter} function to \ttt{genericFilterNaive}
+\item Create and apply a truly generic function
+  \begin{lstlisting}
+    var filterAirportsByIATA = (dest) -> airports filter ($.IATA == dest)
+    var genericFilterNaive = (a,f,v) -> a filter ($[f] == v)
+    var genericFilter = (a,fn) -> a filter fn($)
+    ---
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      ($),
+      airport: genericFilter(airports,(airport) -> airport.IATA == $.destination)
+    }
+  \end{lstlisting}
+  \emph{
+    Those observant enough should be able to realize the \ttt{filter} function is generic enough and there is no need for yet another function.  Nonetheless, this small exercise exposes us to aspects of functional programming and give us insights on how built-in functions that accept \lep{} as arguments behave.
+    \newline
+    This is an example where a function is passed as an argument to yet another function.  In a very similar manner we can return a function as the return value of a function--we shall see this next.
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{Curried functions}
 \begin{enumerate}[resume*]
-\item ...
+\item Create a curried function
+  \begin{lstlisting}
+    var genericFilterC = (a) -> (fn) -> a filter fn($)
+  \end{lstlisting}
+  \emph{
+    Nope there is no relationship to the spice, the name comes from \href{https://en.wikipedia.org/wiki/Haskell_Curry}{Haskell Brooks Curry}.  Curry invented the concept of \href{https://en.wikipedia.org/wiki/Currying}{currying}
+    \newline
+    There are two main reasons for creating curried functions:
+    \begin{itemize}
+    \item Partial application of functions when all the arguments are not present at the same time--I have yet to find a use case where this partial application of curried functions can be applied in DW
+    \item Function factories where out of a single definition you can define different but related functions.  This last point is where curried functions can apply in DW. 
+    \end{itemize}
+  }
+\item Define functions for filtering flights and airports out of the \ttt{genericFilterC} function
+  \begin{lstlisting}
+    var genericFilterC = (a) -> (fn) -> a filter fn($)
+    var flightsFilter = genericFilterC(payload)
+    var airportsFilter = genericFilterC(airports)
+  \end{lstlisting}
+  \emph{
+    Only one of the arguments is applied to \ttt{genericFilterC} and a function is returned and stored in the corresponding variables (i.e. \ttt{flightsFilter} and \ttt{airportsFilter}).
+    \newline
+    Another way to visualize these two function is by illustrating what they look like:
+    \begin{itemize}
+    \item flightsFilter--\ttt{(fn) -> payload filter fn(\$)}
+    \item airportsFilter--\ttt{(fn) -> airports filter fn(\$)}
+    \end{itemize}
+    \href{https://stackoverflow.com/questions/36314/what-is-currying}{This discussion} under stackoverflow could also help with your understanding.
+  }
+\item Apply the \ttt{airportsFilter} function
+  \begin{lstlisting}
+    map {
+      ($),
+      airport: airportsFilter((airport) -> airport.IATA == $.destination)
+    }
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
