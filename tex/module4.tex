@@ -101,6 +101,10 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
   \emph{
     We must enclose the key inside \ttt{()} to force its evaluation.  It is how the language works to facilitate the creation of fields--on the one hand we don't have to make excessive use of quotes enclosing the hard-coded fields while on the other we must enclose the keys inside parenthesis when dynamically evaluating them.
   }
+  \newline
+  \emph{
+    It is worth the effort to inspect the types of fields when using the \ttt{mapObject} function.  By enclosing the \ttt{(sizeOf(k))} you will see in the preview that fields are of a specific type \ttt{Key}.  This is a critical detail that we will latch on when working on the final exercise of the class. 
+  }
 \end{enumerate}
 
 %%%%%%
@@ -135,13 +139,102 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 %%%%%%
 \subsection{Explore the CSV file}
 \begin{enumerate}
-\item ...
+\item Navigate under \ttt{src/main/resources} folder
+\item Right click the \ttt{airportInfoTiny.csv}
+\item Select \ttt{Open With} and then click \ttt{Text Editor}
+\item Discuss the contents and identify bad data
+  \newline
+  \emph{
+    Dealing with bad data now days is the norm, as such this CSV file contains bad data.  There are two instances of such bad data:
+    \begin{itemize}
+    \item In the header the \ttt{ ICAO} header has an empty space in the prefix
+    \item Rows 7 and 13 are duplicated when this CSV file should contain unique records
+    \end{itemize}
+  }
 \end{enumerate}
+
 
 %%%%%%
 \subsection{Parse the CSV airports}
 \begin{enumerate}[resume*]
-\item ...
+\item Navigate back to \ttt{mod4} mule configuration file
+\item Create a new flow named \ttt{mod4-read-parse-file}
+\item Drop a DW to the process area of the flow
+\item Turn on the preview
+\item Change the output to \ttt{application/dw}
+\item Just type the function \ttt{readUrl} in the body of the expression
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    readUrl
+  \end{lstlisting}
+\item Explore the signature
+  \begin{lstlisting}
+    (first:String | Binary, second:String, third:Object) -> ???
+  \end{lstlisting}
+  \emph{
+    The details of \ttt{readUrl} function can be found in this \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-readurl}{page}.
+  }
+\item Read and parse the file
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    readUrl(
+      "classpath://airportInfoTiny.csv",
+      "application/csv",
+      {
+        separator: ","
+      }
+    )
+  \end{lstlisting}
+  \emph{
+    The last argument, aka reader properties, is not needed because the default separator is the \ttt{,} symbol.  It is only here for illustration.  You can find all reader properties, along with the default values, in this \href{https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats-csv\#reader-properties}{documentation page}.
+  }
+\item Fix the duplicate records
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    readUrl(
+      "classpath://airportInfoTiny.csv",
+      "application/csv",
+      {
+        separator: ","
+      }
+    )
+    distinctBy $.IATA
+  \end{lstlisting}
+  \emph{
+    \ttt{IATA} stands for Internation Air Transport Association and its values are standardized across the industry to be unique codes identifying airports.  As such we make use of just this value to create a set out the collection--i.e. get the unique values.
+  }
+\item Incorporate the code in the \ttt{mod4-flights-airports} flow
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+
+    var fs2rn = {
+      airlineName: "carrier",
+      departureDate: "date",
+      emptySeats: "seats",
+      planeType: "plane"
+    }
+
+    var airports = readUrl(
+      "classpath://airportInfoTiny.csv",
+      "application/csv",
+      {
+        separator: ","
+      }
+    )
+    distinctBy $.IATA
+
+    ---
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
