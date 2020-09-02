@@ -368,7 +368,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \end{enumerate}
 
 %%%%%%
-\subsection{Curried functions}
+\subsection{Optional: Curried functions}
 \begin{enumerate}[resume*]
 \item Create a curried function
   \begin{lstlisting}
@@ -394,8 +394,8 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     \newline
     Another way to visualize these two function is by illustrating what they look like:
     \begin{itemize}
-    \item flightsFilter--\ttt{(fn) -> payload filter fn(\$)}
-    \item airportsFilter--\ttt{(fn) -> airports filter fn(\$)}
+    \item flightsFilter: \ttt{(fn) -> payload filter fn(\$)}
+    \item airportsFilter: \ttt{(fn) -> airports filter fn(\$)}
     \end{itemize}
     \href{https://stackoverflow.com/questions/36314/what-is-currying}{This discussion} under stackoverflow could also help with your understanding.
   }
@@ -406,18 +406,105 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       airport: airportsFilter((airport) -> airport.IATA == $.destination)
     }
   \end{lstlisting}
+  \emph{
+    \yellow{TODO: Add the tryCast use-case reference from an apendix}
+  }
 \end{enumerate}
 
 %%%%%%
 \subsection{A more efficient transformation}
 \begin{enumerate}[resume*]
-\item ...
+\item Calculate the complexity of our algorithm
+  \newline
+  \emph{
+    This is more of a discussion and a pen-and-paper exercise.  The essence of this discussion is a calculation, the Big-O notation.  Big-O notation is an abstract notation that measures the number of abstract operations that our algorithm will perform.  Our calculation will be a function of the number of flights and the number of airports.  Our focus is the iterations our algorithm performs, as such:
+    \begin{itemize}
+    \item Assume we have \ttt{N} number of flights
+    \item Assume we have \ttt{M} number of airports
+    \item \ttt{2*M} operations from the expression that reads, parses, and obtaining the set of airports
+    \item \ttt{8*N} operations from the expression that renames dynamically the fields
+    \item \ttt{N*M} operations from the combination of flights and airports
+    \end{itemize}
+  }
+  \emph{
+    Thus the total number of operations is calculated by the \ttt{2*M + 8*N + N*M} polynomial.  Remember the purpose of Big-O: abstractly identify the number of operations our algorithm performs to get the job done.  Spliting your Big-O notation using polynomials such as the one we just created identifies areas of your algorithm that are candidates for optimization.  
+    \newline
+    Replace \ttt{N} and \ttt{M} with a number of reasonable size (anything greater than 10 will do).  Which one of the operations in the polynomial will result in the largest number?  More importantly, if you keep calculating these operations with different number is the growth linear or exponential?  If the growth is exponential then these portions of your algorithm are prime candidates for optimization.  A linear growth is what you are after!
+    \newline
+    The growth of \ttt{N*M} is exponential or approaches an exponential growth.  When performing lookups ensure we have atomic lookups as compared searching arrays.  The ideal data structure to perform such atomic lookups is a map structure.
+  }
+\item Go to the DW processor of the \ttt{mod4-read-parse-file} flow
+\item Change the airports array into an object (aka map)
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    readUrl(
+      "classpath://airportInfoTiny.csv",
+      "application/csv",
+      {
+        separator: ","
+      }
+    )
+    distinctBy $.IATA
+    groupBy $.IATA
+  \end{lstlisting}
+\item Explore the result in the preview
+  \newline
+  \emph{We can find the documentation page for \ttt{groupBy} \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-groupby}{here}.  In essence, \ttt{groupBy} takes the input array and transforms it into an object where the field names are set to the values the \les{} \ttt{\$.IATA} evaluates to.
+  }
+\item Apply the \ttt{groupBy} function to the \ttt{airports} variable in \ttt{mod4-flights-airports} flow
+  \begin{lstlisting}
+    var airports = readUrl(
+      "classpath://airportInfoTiny.csv",
+      "application/csv",
+      {
+        separator: ","
+      }
+    )
+    distinctBy $.IATA
+    groupBy $.IATA
+  \end{lstlisting}
+  \emph{
+    We should be getting an error now.  The error identifies a type-mismatch on the \ttt{filter} function--i.e. An object is passed when an array is expected. 
+  }
+\item Change our expression to perform atomic lookups
+  \begin{lstlisting}
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      ($),
+      airport: airports[$.destination]
+    }
+  \end{lstlisting}
+  \emph{
+    A couple of notes to conclude this WT:
+    \begin{itemize}
+    \item The new complexity now is \ttt{3*M + 8*N + N}, we reached linear growth.
+    \item The complexity we reached is related to processing time and we did not bother with the spatial complexity of our algorithm--i.e. the size of memory we use.  Perhaps this will be a good exercise for the students to complete on their own.
+    \item Finaly, we wonder why go through creation of a generic filter function to begin with?  The answer is we are getting exposure to functional programming where the knowledge thereof is crucial to all aspiring DW programmers.
+    \end{itemize}
+  }
 \end{enumerate}
 
 %%%%%%
-\subsection{Clean up the data}
+\subsection{Optional: Clean up the data}
 \begin{enumerate}[resume*]
-\item ...
+\item Remove the \ttt{timeZone}, \ttt{type}, and \ttt{source} from the \ttt{airport} object
+  \begin{lstlisting}
+    map {
+      ($),
+      airport: airports[$.destination][0] - "timeZone" - "type" - "source"
+    }
+  \end{lstlisting}
+\item Remove the \ttt{destination} field from each flight
+  \begin{lstlisting}
+    map {
+      ($ - "destination"),
+      airport: airports[$.destination][0] - "timeZone" - "type" - "source"
+    }
+  \end{lstlisting}
 \end{enumerate}
 
 %%
