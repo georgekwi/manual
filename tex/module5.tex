@@ -19,27 +19,73 @@
 %%%%%%
 \subsection{Intro to recursion}
 \begin{enumerate}[resume*]
-\item ...
-\end{enumerate}
-
-%%%%%%
-\subsection{Intro to recursion}
-\begin{enumerate}[resume*]
-\item ...
-\end{enumerate}
-
+\item Recursive summation formula
+  \begin{itemize}
+  \item Termination: $\Sigma(0) = 0$
+  \item Recursion: $\Sigma(n) = n + \Sigma(n - 1)$
+  \end{itemize}
+\item Define and apply the \ttt{recsum} function
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum(n - 1)
+    ---
+    recsum(3)
+  \end{lstlisting}
+  \emph{
+    The definition is very similar to the formula we laid out in the previous step.  Such is the beauty of recursive functions, they closely reflect their textbook definitions.
+    \newline
+  }
+\item \ttt{recsum} with any number over 254
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum(n - 1)
+    ---
+    recsum(255)
+  \end{lstlisting}
+\item The \ttt{stackoverflow} error
+  \begin{lstlisting}
+    Stack Overflow. Max stack is 256
+  \end{lstlisting}
+  \emph{
+    Those of us familiar with the stackoverflow errors we know what has just happened.  When making recursive calls more memory is used because (in the \href{https://en.wikipedia.org/wiki/Stack-based_memory_allocation}{Stack area of the memory}) that stores the frame/environment details of your call.  If we have enough recursive calls we run out of memory, i.e. stackoverflow errors.
+    \newline
+    In DW this limit is fixed to 256 depths preemptively to ensure a more graceful behavior.  Depending on the type of recursive function we are writing we could increase this limit to a different number using a Mule Runtime startup option, for example \ttt{-M-Dcom.mulesoft.dw.stacksize=1000}
+    \newline We can avoid such stackoverflow errors by writing tail-recursive functions.
+  }
 
 %%%%%%
 \subsection{Tail-recursion}
-\begin{enumerate}[resume*]
-\item ...
+
+\item Define and apply the \ttt{tailrecsum} function
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum(n - 1)
+    var tailrecsum = (n: Number, result: Number = 0) -> 
+                         if (n <= 0) result else tailrecsum(n - 1, result + n)
+    ---
+    tailrecsum(2550)
+  \end{lstlisting}
+  \emph{
+    A \href{https://en.wikipedia.org/wiki/Tail_call}{tail-recursive} function is a function where the very last operation that takes place is the recursive call, hence its name.  In order to build such a function the result of the function is usually piggybacked as an additional argument to the function. Compilers, including the DW compiler, can detect tail-recursive functions and optimize them such that they are no longer make use of stack memory!
+    \newline
+    In order case in order to simplify the invocation of our function we have set an initial value of \ttt{0} to this extra argument.
+    \newline
+    A word of warning, creating tail-recursive for recursive functions of sufficient complexity is considered hard.  They require experience and would potentially make our code unreadable, unmaintainable.  Create them when they are absolutely needed and stick to the more readable recursive version in all other cases.  
+  }
+\item Apply the \ttt{@TailRec()} annotation
+  \begin{lstlisting}
+    @TailRec()
+    var tailrecsum = (n: Number, result: Number = 0) -> 
+                         if (n <= 0) result else tailrecsum(n - 1, result + n)
+  \end{lstlisting}
+  \emph{
+    This annotation will confirm to us that we have defined a tail-recursive function.  If you apply this annotation to a non-tail-recursive function the compiler will respond with an error.
+  }
 \end{enumerate}
 
-%%%%%%
-\subsection{Tail-recursion}
-\begin{enumerate}[resume*]
-\item ...
-\end{enumerate}
 
 %%
 %%
@@ -56,27 +102,76 @@
 \end{enumerate}
 
 %%%%%%
-\subsection{Create a new flow}
-\begin{enumerate}[resume*]
-\item ...
-\end{enumerate}
-
-%%%%%%
 \subsection{The sample data}
 \begin{enumerate}[resume*]
-\item ...
+\item Create a simple array of arrays
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    [0,1,[2,[3,[4,[5]]]]]
+  \end{lstlisting}
+\item Apply \ttt{flatten} four times
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    ---
+    flatten(
+      flatten(
+        flatten(
+	  flatten(
+	    [0,1,[2,[3,[4,[5]]]]]
+	  )
+	)
+      )
+    )
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
 \subsection{The \ttt{rflatten} function}
 \begin{enumerate}[resume*]
-\item ...
+\item Create a recursive function that just traverses the arrays
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var rflatten = (a: Array) -> a map (
+      if (not ($ is Array)) $ else rflatten($)
+    )
+    ---
+    rflatten([0,1,[2,[3,[4,[5]]]]])
+  \end{lstlisting}
+  \emph{
+    To see that all elements in the arrays of sub-arrays are being traversed, we only need to change the second \ttt{\$} in the if-expression to a literal value.
+  }
+\item Apply \ttt{flatten} at the right level
+  \begin{lstlisting}
+    %dw 2.0
+    output application/dw
+    var rflatten = (a: Array) -> flatten(a map (
+      if (not ($ is Array)) $ else rflatten($)
+    ))
+    ---
+    rflatten([0,1,[2,[3,[4,[5]]]]])
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
 \subsection{A tail-recursive version of \ttt{rflatten}}
 \begin{enumerate}[resume*]
-\item ...
+\item Create a trail-recursive version of \ttt{rflatten}
+  \begin{lstlisting}
+    @TailRec()
+    var tailrflatten = (a: Array) -> 
+      if ( 
+        not (a dw::core::Arrays::some ($ is Array))
+      ) a else tailrflatten(flatten(a))
+    ---
+    tailrflatten([0,1,[2,[3,[4,[5]]]]])
+  \end{lstlisting}
+  \emph{
+    This solution is ingenious because we don't even need to piggyback the result as an argument.  Instead we recursively apply \ttt{flatten} for as long as the array contains arrays.  This \ttt{tailrflatten} is a top-to-bottom solution as compared the bottom-up approach we take with the \ttt{rflatten} function.
+  }
 \end{enumerate}
 
 
@@ -98,7 +193,7 @@
 \end{enumerate}
 
 %%%%%%
-\subsection{Cast to \ttt{Number} and \{Date} when possible}
+\subsection{Cast to \ttt{Number} and \ttt{Date} when possible}
 \begin{enumerate}[resume*]
 \item ...
 \end{enumerate}
