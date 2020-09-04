@@ -182,18 +182,228 @@
 
 %%%%%%
 \subsection{Traverse the flights and airports data structure}
-\begin{enumerate}[resume*]
-\item ...
+\begin{enumerate}
+\item Navigate to the \ttt{mod4-flights-airports} flow
+\item Click on the DW processor in the source area of the flow
+\item Define the \ttt{traverse} function handling arrays
+  \begin{lstlisting}
+    fun traverse(a: Array) = a map traverse($)
+  \end{lstlisting}
+  \emph{
+    Recursively, traverse each one of the elements in the array.
+  }
+\item Overload \ttt{traverse} to handle objects
+  \begin{lstlisting}
+    fun traverse(a: Array) = a map traverse($)
+    fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
+  \end{lstlisting}
+  \emph{
+    Recursively, traverse the each one of the keys and values of the object. 
+  }
+\item Overload \ttt{traverse} to handle keys
+  \begin{lstlisting}
+    fun traverse(a: Array) = a map traverse($)
+    fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
+    fun traverse(k: Key) = k
+  \end{lstlisting}
+  \emph{
+    For the time being just return the key as is.  The reason is because we will apply the function and then we shall apply changes to these keys and visually identify our changes as we perform them.
+  }
+\item Overload the \ttt{traverse} to handler strings
+  \begin{lstlisting}
+    fun traverse(a: Array) = a map traverse($)
+    fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
+    fun traverse(k: Key) = k
+    fun traverse(s: String) = s
+  \end{lstlisting}
+  \emph{
+    Again the time being just return the string as is for the same reason as above.
+    \newline
+    We only need to overload our \ttt{traverse} function for arrays, objects, keys, and strings because that is the only types we need to traverse.  If we had additional types then we must provide additional overloaded function definitions.
+  }
+\item Apply the \ttt{traverse} function
+  \begin{lstlisting}
+    fun traverse(a: Array) = a map traverse($)
+    fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
+    fun traverse(k: Key) = k
+    fun traverse(s: String) = s
+    ---
+    traverse(
+      payload map (
+        $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+      )
+      map {
+        ($),
+        airport: airports[$.destination]
+      }
+      map (
+        $ reorder (8 to 0)
+      )
+    )
+  \end{lstlisting}
+  \emph{
+    There should be no affect seen in the preview.
+  }
+\item Remove the extra leading space to the \ttt{ICAO} field
+  \begin{lstlisting}
+    fun traverse(k: Key) = trim(k)
+  \end{lstlisting}
+  \emph{
+    Notice the how the space is removed for all airports.  We are traversing the data!
+  }
+\item Upper case all field names
+  \begin{lstlisting}
+    fun traverse(k: Key) = upper(trim(k))
+  \end{lstlisting}
+  \emph{
+    We could potentially combine the field renaming we performed earlier on using this overloaded \ttt{traverse} function for keys.  We have to be careful, however, because all fields independent of depth will be renamed.
+  }
+\item Lower case all strings
+  \begin{lstlisting}
+    fun traverse(s: String) = lower(s)
+  \end{lstlisting}
+\item Remove the \ttt{traverse} function application
+  \begin{lstlisting}
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      ($),
+      airport: airports[$.destination]
+    }
+    map (
+      $ reorder (8 to 0)
+    )
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
 \subsection{A more flexible solution}
 \begin{enumerate}[resume*]
-\item ...
+\item Define the \ttt{traverseFn} operating over arrays
+  \begin{lstlisting}
+    fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
+  \end{lstlisting}
+  \emph{
+    Very similar definition to \ttt{traverse} the only difference being an extra the argument \tt{fn}.  This \tt{fn} is a function that will contain the operations to be performed for the simple types, i.e. keys and strings.  This way we decouple operations from simple types and the complex types which we primarily need in order to traverse. 
+  }
+\item Overload the \ttt{traverseFn} operating over objects
+  \begin{lstlisting}
+    fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
+    fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
+  \end{lstlisting}
+\item Overload the \ttt{traverseFn} operating over keys
+  \begin{lstlisting}
+    fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
+    fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
+    fun traverseFn(k: Key, fn) = fn(k)
+  \end{lstlisting}
+  \emph{
+    Because we decouple the simple type from the complex type expressions and provide these simple type expressions through a \les{} we only need to apply this \les{} for keys. 
+  }
+\item Overload the \ttt{traverseFn} operating over strings
+  \begin{lstlisting}
+    fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
+    fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
+    fun traverseFn(k: Key, fn) = fn(k)
+    fun traverseFn(s: String, fn) = fn(s)
+  \end{lstlisting}
+\item Apply \ttt{traverseFn}
+  \begin{lstlisting}
+    fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
+    fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
+    fun traverseFn(k: Key, fn) = fn(k)
+    fun traverseFn(s: String, fn) = fn(s)
+    ---
+    payload map (
+      $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
+    )
+    map {
+      ($),
+      airport: airports[$.destination]
+    }
+    map (
+      $ reorder (8 to 0)
+    )
+    traverseFn (
+      (e) -> e match {
+        else -> $
+      }
+    )
+  \end{lstlisting}
+  \emph{
+    This \les{} is just a \ttt{match} operator making no changes currently to the keys and strings.  We will make this changes next.
+  }
+\item Fix the \ttt{ICAO} and upper case all fields again
+  \begin{lstlisting}
+    traverseFn (
+      (e) -> e match {
+        case k if (k is Key) -> upper(trim(k))
+        else -> $
+      }
+    )
+  \end{lstlisting}
+\item Lower case all strings again
+  \begin{lstlisting}
+    traverseFn (
+      (e) -> e match {
+        case k if (k is Key) -> upper(trim(k))
+        case s if (s is String) -> lower(s)
+        else -> $
+      }
+    )    
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
 \subsection{Cast to \ttt{Number} and \ttt{Date} when possible}
 \begin{enumerate}[resume*]
-\item ...
+\item Explore the output data in the preview
+  \newline
+  \emph{
+    There are plenty of values that are numbers and could be typecasted into a number as compared to just the string representation of that number.  Similarly, there is the \ttt{DATE} field that contains a date in a string denotation.
+  }
+\item Apply \ttt{dw::Runtime::try} and try to typecast numbers
+  \begin{lstlisting}
+    traverseFn (
+      (e) -> e match {
+        case k if (k is Key) -> upper(trim(k))
+        case s if (s is String) -> dw::Runtime::try(() -> s as Number)
+        else -> $
+      }
+    )
+  \end{lstlisting}
+  \emph{
+    Every single value in our objects is now a \ttt{TryResult} structure.  Those with \ttt{success: true} contain the type-casted number, while those with \ttt{success: false} contain the error details.
+  }
+\item Chain the \ttt{dw::Runtime::orElse} function
+  \begin{lstlisting}
+    traverseFn (
+      (e) -> e match {
+        case k if (k is Key) -> upper(trim(k))
+        case s if (s is String) -> dw::Runtime::try(() -> s as Number)
+                                   dw::Runtime::orElse () -> lower(s)
+        else -> $
+      }
+    )
+  \end{lstlisting}
+  \emph{
+    The documentation for \ttt{dw::Runtime::orElse} can be found \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-functions-orelse}{here}.
+  }
+\item Apply \ttt{dw::Runtime::orElseTry} to typecast the \ttt{DATE} field
+  \begin{lstlisting}
+    traverseFn (
+      (e) -> e match {
+        case k if (k is Key) -> upper(trim(k))
+        case s if (s is String) ->
+            dw::Runtime::try(() -> s as Number)
+            dw::Runtime::orElseTry (() -> s as Date {format: "yyyy/MM/dd"})
+            dw::Runtime::orElse () -> lower(s)
+        else -> $
+      }
+    )
+  \end{lstlisting}
+  \emph{
+    The documentation for \ttt{dw::Runtime::orElseTry} can be found \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-functions-orelsetry}{here}
+  }
 \end{enumerate}
