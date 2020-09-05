@@ -23,12 +23,9 @@
     Furthermore, you become familiar with the starter project in case you would like to follow the manual that comes packaged with the class.
   }
 \item Create a new project and call it \ttt{dataweave}
-\item From the \ttt{apdw2-flights-starter} copy the following files over to the new project:
-  \begin{enumerate}
-  \item \ttt{src/main/resources/airportInfoTiny.csv} to \ttt{src/main/resources}
-  \item \ttt{src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \ttt{src/test/resources}
-  \item \ttt{src/test/resources/flight-example.json} to \ttt{src/test/resources}
-  \end{enumerate}
+\item Copy the \ttt{apdw2-flights-starter/src/main/resources/airportInfoTiny.csv} to \ttt{dataweave/src/main/resources}
+\item Copy the \ttt{apdw2-flights-starter/src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \ttt{dataweave/src/test/resources}
+\item Copy the \ttt{apdw2-flights-starter/src/test/resources/flight-example.json} to \ttt{dataweave/src/test/resources}
 \end{enumerate}
 
 %%
@@ -62,53 +59,83 @@
 %%%%%%
 \subsection{Construction}
 \begin{enumerate}[resume*]
-\item What are the semantics of \ttt{\{\}} in DW?
-  \begin{enumerate}
-  \item Object creation
-  \end{enumerate}
-\item What are the semantics of \ttt{[]} in DW?
-  \begin{enumerate}
-  \item Array creation
-  \end{enumerate}
+\item Create an empty object
+  \begin{lstlisting}
+    %dw 2.0
+    output application/java
+    ---
+    {}
+  \end{lstlisting}
+  \emph{
+    DW is JSON-like, that is the designers of DW borrowed syntax and semantics from JSON.  As such, the semantics of \ttt{{}} in DW is object creation.   
+  }
+\item Create an empty array
+  \begin{lstlisting}
+    %dw 2.0
+    output application/java
+    ---
+    []
+  \end{lstlisting}
 \end{enumerate}
 
 %%%%%%
 \subsection{Fields}
 \begin{enumerate}[resume*]
-\item Three different ways of accessing the field \ttt{airline}
-  out of the \ttt{payload}. What are they?
-  \begin{enumerate}
-  \item \ttt{payload.airline}
-  \item \ttt{payload["airline"]}
-  \item \ttt{payload[0]}
-  \end{enumerate}
-  \emph{Let me let you in a secret: Objects internally are represented as arrays—field access is a facade}
-\item Why DW stores objects as arrays?
-  \begin{enumerate}
-  \item Because DW is the only language I know of that allows the creation of objects with
-    duplicate field names...
-    \begin{lstlisting}
-      {
-        a: 1,
-        a: 2,
-        a: 3
-      }
-    \end{lstlisting}
-    ... and the only way I can access the second and third field is through an index access.
-    But now we have more questions that need to be answered.
-  \item Why would a language allow for such a feature?  That is duplicate fields within an object.
-    Because of XML, how else you expect to be able to generate XML with tags that repeat:
-    \begin{lstlisting}
-      %dw 2.0
-      output application/xml
-      ---
-      "as": {
-	a: 1,
-	a: 2,
-	a: 3
-      }        
-    \end{lstlisting}
-  \end{enumerate}
+\item Use the dot notation to access the \ttt{airline} field
+  \begin{lstlisting}
+    %dw 2.0
+    output application/java
+    ---
+    payload.airline    
+  \end{lstlisting}
+\item Use the bracket notation to access the \ttt{airline} field
+  \begin{lstlisting}
+    %dw 2.0
+    output application/java
+    ---
+    payload["airline"]    
+  \end{lstlisting}
+  \emph{
+    Dynamically evaluating field names and accessing them can easily be achieved using this bracket notation.
+  }
+\item Use the index 0 to access the \ttt{airline} field
+  \begin{lstlisting}
+    %dw 2.0
+    output application/java
+    ---
+    payload[0]
+  \end{lstlisting}
+  \emph{
+    Let me let you in a secret: Objects internally are represented as arrays—-field access is a facade
+  }
+\item Create an object with repeating field names
+  \begin{lstlisting}
+    %dw 2.0
+    output application/java
+    ---
+    {
+      flight: 1,
+      flight: 2,
+      flight: 3
+    }
+  \end{lstlisting}
+  \emph{
+    Here lies the explanation as to why DW objects are stored internally as arrays.  An object containing duplicate field names can only access any of these duplicates fields other than the first through indexes.
+    }
+\item Transform data into XML
+  \begin{lstlisting}
+    %dw 2.0
+    output application/xml
+    ---
+    flights: {
+      flight: 1,
+      flight: 2,
+      flight: 3
+    }
+  \end{lstlisting}
+  \emph{
+    Because DW must support XML and because XML has no clue of collections other than repeating tags, how else do we expect to be able to generate XML with tags that repeat in DW if not for fields repeating inside DW objects.  It is ingenious!
+  }
 \end{enumerate}
 
 %%%%%%
