@@ -32,14 +32,14 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Create the map}
 \begin{enumerate}[resume*]
 \item Create a variable, \ttt{fs2fs}, that contains a map from source field names to target field names
-  \begin{lstlisting}
+  \begin{verbatim}
     var fs2rn = {
       airlineName: "carrier",
       departureDate: "date",
       emptySeats: "seats",
       planeType: "plane"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     I do know we can just do it in-place as part of the lambda expression of a \ttt{map} function. Creating the variable will allow to show how it can be done dynamically.  I could easily pass such a map through an HTTP request, read it from a file, etc.
   }
@@ -53,7 +53,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{The \ttt{mapObject} function}
 \begin{enumerate}[resume*]
 \item Access the first object
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     
@@ -65,21 +65,21 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     }
     ---
     payload[0]
-  \end{lstlisting}
+  \end{verbatim}
 \item Visit the \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-mapobject}{\ttt{mapObject} documentation page} and explore its signature.  Focus on the return type of the \les{}.
 \item Iterate over the object and return the empty object form the \les
-  \begin{lstlisting}
+  \begin{verbatim}
     payload[0] mapObject (v,k,i) -> {}
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Notice the result in the preview, it is also an empty object.  \ttt{mapObject} invokes the \les{} once for every single pair of key and value in order of appearance.  The result of \ttt{mapObject} is the concatenated objects returned from the \les.
   }
 \item Reform the object
-  \begin{lstlisting}
+  \begin{verbatim}
     payload[0] mapObject (v,k,i) -> {k: v}
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the preview
-  \begin{lstlisting}
+  \begin{verbatim}
     {
       k: "Delta",
       k: "A1B2C3",
@@ -90,14 +90,14 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       k: "Boing 737",
       k: "400.0"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Notice that the values are being reformed, that is the \ttt{v} is evaluated, while the keys, \ttt{k}, is displayed verbatim.
   }
 \item Force the evaluation of the field name
-  \begin{lstlisting}
+  \begin{verbatim}
     payload[0] mapObject (v,k,i) -> {(k): v}
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We must enclose the key inside \ttt{()} to force its evaluation.  It is how the language works to facilitate the creation of fields--on the one hand we don't have to make excessive use of quotes enclosing the hard-coded fields while on the other we must enclose the keys inside parenthesis when dynamically evaluating them.
   }
@@ -111,24 +111,24 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Change the field names}
 \begin{enumerate}[resume*]
 \item Dynamically evaluate the key based upon the \ttt{fs2rn} map for a single object
-  \begin{lstlisting}
+  \begin{verbatim}
     payload[0] mapObject (v,k,i) -> {(fs2rn[k]): v}
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the error: \ttt{Cannot coerce Null (null) to Key}
   \newline
   \emph{
     The error is due to keys not appearing in the \ttt{fs2rn} map.  For example, \ttt{code}, \ttt{price}, etc.
   }
 \item Accommodate for unchanged keys
-  \begin{lstlisting}
+  \begin{verbatim}
     payload[0] mapObject (v,k,i) -> {(fs2rn[k] default k): v}
-  \end{lstlisting}
+  \end{verbatim}
 \item Change the field names for all objects in the array
-  \begin{lstlisting}
+  \begin{verbatim}
     payload map (
       $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
     )
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%
@@ -163,21 +163,21 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \item Turn on the preview
 \item Change the output to \ttt{application/dw}
 \item Just type the function \ttt{readUrl} in the body of the expression
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     readUrl
-  \end{lstlisting}
+  \end{verbatim}
 \item Explore the signature
-  \begin{lstlisting}
+  \begin{verbatim}
     (first:String | Binary, second:String, third:Object) -> ???
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The details of \ttt{readUrl} function can be found in this \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-readurl}{page}.
   }
 \item Read and parse the file
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -188,12 +188,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
         separator: ","
       }
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The last argument, aka reader properties, is not needed because the default separator is the \ttt{,} symbol.  It is only here for illustration.  You can find all reader properties, along with the default values, in this \href{https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats-csv\#reader-properties}{documentation page}.
   }
 \item Fix the duplicate records
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -205,12 +205,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       }
     )
     distinctBy $.IATA
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     \ttt{IATA} stands for International Air Transport Association and its values are standardized across the industry to be unique codes identifying airports.  As such we make use of just this value to create a set out the collection--i.e. get the unique values.
   }
 \item Incorporate the code in the \ttt{mod4-flights-airports} flow
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
 
@@ -234,53 +234,53 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     payload map (
       $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
     )
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{Inject the airport to each flight}
 \begin{enumerate}[resume*]
 \item Chain another \ttt{map} function
-  \begin{lstlisting}
+  \begin{verbatim}
     payload map (
       $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
     )
     map {
       
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     There is no need for another chained \ttt{map} function, can can embed the combination of the data in a single iteration.  However, since we are in training clarity takes precedence vs performance.
   }
 \item Reintroduce the fields from the previous map
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($)
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Add the \ttt{airport} field and assign to it all airports
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($),
       airport: airports
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Nest \ttt{filter} to search for the \ttt{SFO} airport
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($),
       airport: airports filter ($.IATA == "SFO")
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Dynamically make use of the flight's \ttt{destination} field to search the airports
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($),
       airport: airports filter ($.IATA == $.destination)
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the output in the preview
-  \begin{lstlisting}
+  \begin{verbatim}
     [
       {
         carrier: "Delta",
@@ -295,17 +295,17 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       },
       ...
     ]
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Notice the empty data when earlier we were displaying the SFO record.  The reason for this is because we have nested a filter right inside a map function and we choose to make use of the \ttt{\$} placeholders in both cases!
   }
 \item Change \ttt{filter}'s \les{} argument names fixing the transformation
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($),
       airport: airports filter  (e) -> (e.IATA == $.destination)
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Not only we fixed our transformation by combining each flight with an airport record we also fixed the airport record that is associated with a flight to match the flight's record \ttt{destination} field value.
   } 
@@ -315,7 +315,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Functions as values}
 \begin{enumerate}[resume*]
 \item Create and apply a function that does the filtering
-  \begin{lstlisting}
+  \begin{verbatim}
     var filterAirportsByIATA = (dest) -> airports filter ($.IATA == dest)
     ---
     payload map (
@@ -325,12 +325,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       ($),
       airport: filterAirportsByIATA($.destination)
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     For the most part the name of this functions gives away that every single aspect is hard-coded, apart from the IATA code passed to the \ttt{dest} argument.
   }
 \item Create and apply a ``naive'' generic filter function
-  \begin{lstlisting}
+  \begin{verbatim}
     var filterAirportsByIATA = (dest) -> airports filter ($.IATA == dest)
     var genericFilter = (a,f,v) -> a filter ($[f] == v)
     ---
@@ -341,13 +341,13 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       ($),
       airport: genericFilter(airports,"IATA",$.destination)
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This is a naive version of a generic filter because we have hard-coded the condition!  A generic filter function should be able to take any kind of a \ttt{Boolean} condition and filter records of data.
   }
 \item Rename the \ttt{genericFilter} function to \ttt{genericFilterNaive}
 \item Create and apply a truly generic function
-  \begin{lstlisting}
+  \begin{verbatim}
     var filterAirportsByIATA = (dest) -> airports filter ($.IATA == dest)
     var genericFilterNaive = (a,f,v) -> a filter ($[f] == v)
     var genericFilter = (a,fn) -> a filter fn($)
@@ -359,7 +359,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       ($),
       airport: genericFilter(airports,(airport) -> airport.IATA == $.destination)
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Those observant enough should be able to realize the \ttt{filter} function is generic enough and there is no need for yet another function.  Nonetheless, this small exercise exposes us to aspects of functional programming and give us insights on how built-in functions that accept \lep{} as arguments behave.
     \newline
@@ -371,9 +371,9 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Optional: Curried functions}
 \begin{enumerate}[resume*]
 \item Create a curried function
-  \begin{lstlisting}
+  \begin{verbatim}
     var genericFilterC = (a) -> (fn) -> a filter fn($)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Nope there is no relationship to the spice, the name comes from \href{https://en.wikipedia.org/wiki/Haskell_Curry}{Haskell Brooks Curry}.  Curry invented the concept of \href{https://en.wikipedia.org/wiki/Currying}{currying}
     \newline
@@ -384,11 +384,11 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     \end{itemize}
   }
 \item Define functions for filtering flights and airports out of the \ttt{genericFilterC} function
-  \begin{lstlisting}
+  \begin{verbatim}
     var genericFilterC = (a) -> (fn) -> a filter fn($)
     var flightsFilter = genericFilterC(payload)
     var airportsFilter = genericFilterC(airports)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Only one of the arguments is applied to \ttt{genericFilterC} and a function is returned and stored in the corresponding variables (i.e. \ttt{flightsFilter} and \ttt{airportsFilter}).
     \newline
@@ -400,12 +400,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     \href{https://stackoverflow.com/questions/36314/what-is-currying}{This discussion} under stackoverflow could also help with your understanding.
   }
 \item Apply the \ttt{airportsFilter} function
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($),
       airport: airportsFilter((airport) -> airport.IATA == $.destination)
     }
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
@@ -432,7 +432,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
   }
 \item Go to the DW processor of the \ttt{mod4-read-parse-file} flow
 \item Change the airports array into an object (aka map)
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -445,13 +445,13 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     )
     distinctBy $.IATA
     groupBy $.IATA
-  \end{lstlisting}
+  \end{verbatim}
 \item Explore the result in the preview
   \newline
   \emph{We can find the documentation page for \ttt{groupBy} \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-groupby}{here}.  In essence, \ttt{groupBy} takes the input array and transforms it into an object where the field names are set to the values the \les{} \ttt{\$.IATA} evaluates to.
   }
 \item Apply the \ttt{groupBy} function to the \ttt{airports} variable in \ttt{mod4-flights-airports} flow
-  \begin{lstlisting}
+  \begin{verbatim}
     var airports = readUrl(
       "classpath://airportInfoTiny.csv",
       "application/csv",
@@ -461,12 +461,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     )
     distinctBy $.IATA
     groupBy $.IATA
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We should be getting an error now.  The error identifies a type-mismatch on the \ttt{filter} function--i.e. An object is passed when an array is expected. 
   }
 \item Change our expression to perform atomic lookups
-  \begin{lstlisting}
+  \begin{verbatim}
     payload map (
       $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
     )
@@ -474,7 +474,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       ($),
       airport: airports[$.destination]
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     A couple of notes to conclude this WT:
     \begin{itemize}
@@ -489,19 +489,19 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Optional: Clean up the data}
 \begin{enumerate}[resume*]
 \item Remove the \ttt{timeZone}, \ttt{type}, and \ttt{source} from the \ttt{airport} object
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($),
       airport: airports[$.destination][0] - "timeZone" - "type" - "source"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Remove the \ttt{destination} field from each flight
-  \begin{lstlisting}
+  \begin{verbatim}
     map {
       ($ - "destination"),
       airport: airports[$.destination][0] - "timeZone" - "type" - "source"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%
@@ -524,36 +524,36 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{The \ttt{pluck} function}
 \begin{enumerate}[resume*]
 \item Use \ttt{pluck} to retrieve the values of an object
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload pluck (v,k,i) -> v
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The documentation for \ttt{pluck} is found \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-pluck}{here}.  \ttt{pluck} is very similar to \ttt{mapObject}, we still iterate an object with it but instead of returning another object we are returning an array.
   }
 \item Modify the expression to retrieve the keys of an object
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload pluck (v,k,i) -> k
-  \end{lstlisting}
+  \end{verbatim}
 \item Modify the expression to retrieve the indexes
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload pluck (v,k,i) -> i
-  \end{lstlisting}
+  \end{verbatim}
 \item Repeat the last three steps but this time make use of the \ttt{\$}, \ttt{\$\$}, and \ttt{\$\$\$} placeholders
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload pluck $
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The manual just displays one of the expressions, we can form the other two on our own.
     \newline
@@ -565,12 +565,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{The \ttt{reduce} function}
 \begin{enumerate}[resume*]
 \item Explore a \ttt{reduce} function
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [3,1,2] reduce $$+$
-  \end{lstlisting}
+  \end{verbatim}
 \item Explore the result
   \newline
   \emph{
@@ -581,19 +581,19 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     \ttt{reduce} falls under a family of functions generally referred to as \href{https://en.wikipedia.org/wiki/Fold_(higher-order_function)}{fold functions}.  Unlike these fold functions which take any data as an input and result into any data as an output \ttt{reduce} in DW accepts only arrays as inputs but it can generate any type of data as an output.
   }
 \item Stop using the \ttt{\$} and \ttt{\$\$} placeholders
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [3,1,2] reduce (e, acc) -> acc + e    
-  \end{lstlisting}
+  \end{verbatim}
 \item Provide an initial value for the accumulator
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [3,1,2] reduce (e, acc=0) -> acc + e
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This initial value on the accumulator is critical because now \ttt{reduce} knows what type of data to generate.  We can replace this initial value to the empty array and inspect how the result changes from a number to the an array containing the exact same elements as the original array.  This is because the \ttt{+} operator is overloaded to operated against numbers and arrays.
   }
@@ -614,13 +614,13 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Re-ordering fields}
 \begin{enumerate}[resume*]
 \item \ttt{reorder} function skeleton
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var reorder = (o, ris) -> o 
     ---
     payload reorder [8,2,1,7,3,4,7,5,6,0]
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The \ttt{reorder} function takes two arguments:
     \begin{itemize}
@@ -629,7 +629,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     \end{itemize}
   }
 \item Reorder using \ttt{map}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var reorder = (o, ris) -> do {
@@ -641,12 +641,12 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     }
     ---
     payload reorder [8,2,1,7,3,4,7,5,6,0]
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We made use of \ttt{map} to iterate the \ttt{ris} and the fact the objects can be accessed by indexes to perform the re-ordering.  Finally, destroyed the array and collapsed the objects in it using the \href{https://docs.mulesoft.com/mule-runtime/4.3/dataweave-types\#dynamic_elements}{Dynamic elements} feature.
   }
 \item Reorder using \ttt{reduce}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var reorder = (o, ris) -> do {
@@ -658,7 +658,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     }
     ---
     payload reorder [8,2,1,7,3,4,7,5,6,0]
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This solution is superior because there is no need to destroy arrays, collapse objects.  We obtain the final result through a single iteration as compared to two from the previous solution.
     \newline
@@ -670,7 +670,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Integrate field re-ordering to our main use-case}
 \begin{enumerate}[resume*]
 \item Copy-n-paste the \ttt{reorder} function to \ttt{mod4-flights-airports}
-  \begin{lstlisting}
+  \begin{verbatim}
     var reorder = (o, ris) -> do {
       var fs = o pluck $$
       ---
@@ -686,9 +686,9 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
       ($),
       airport: airports[$.destination]
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Re-order every single flight object in reverse
-  \begin{lstlisting}
+  \begin{verbatim}
     var reorder = (o, ris) -> do {
       var fs = o pluck $$
       ---
@@ -707,5 +707,5 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     map (
       $ reorder (8 to 0)
     )
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}

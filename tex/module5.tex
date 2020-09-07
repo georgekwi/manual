@@ -25,29 +25,29 @@
   \item Recursion: $\Sigma(n) = n + \Sigma(n - 1)$
   \end{itemize}
 \item Define and apply the \ttt{recsum} function
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum(n - 1)
     ---
     recsum(3)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The definition is very similar to the formula we laid out in the previous step.  Such is the beauty of recursive functions, they closely reflect their textbook definitions.
     \newline
   }
 \item \ttt{recsum} with any number over 254
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum(n - 1)
     ---
     recsum(255)
-  \end{lstlisting}
+  \end{verbatim}
 \item The \ttt{stackoverflow} error
-  \begin{lstlisting}
+  \begin{verbatim}
     Stack Overflow. Max stack is 256
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Those of us familiar with the stackoverflow errors we know what has just happened.  When making recursive calls more memory is used because (in the \href{https://en.wikipedia.org/wiki/Stack-based_memory_allocation}{Stack area of the memory}) that stores the frame/environment details of your call.  If we have enough recursive calls we run out of memory, i.e. stackoverflow errors.
     \newline
@@ -59,7 +59,7 @@
 \subsection{Tail-recursion}
 
 \item Define and apply the \ttt{tailrecsum} function
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum(n - 1)
@@ -67,7 +67,7 @@
                          if (n <= 0) result else tailrecsum(n - 1, result + n)
     ---
     tailrecsum(2550)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     A \href{https://en.wikipedia.org/wiki/Tail_call}{tail-recursive} function is a function where the very last operation that takes place is the recursive call, hence its name.  In order to build such a function the result of the function is usually piggybacked as an additional argument to the function. Compilers, including the DW compiler, can detect tail-recursive functions and optimize them such that they are no longer make use of stack memory!
     \newline
@@ -76,11 +76,11 @@
     A word of warning, creating tail-recursive for recursive functions of sufficient complexity is considered hard.  They require experience and would potentially make our code unreadable, unmaintainable.  Create them when they are absolutely needed and stick to the more readable recursive version in all other cases.  
   }
 \item Apply the \ttt{@TailRec()} annotation
-  \begin{lstlisting}
+  \begin{verbatim}
     @TailRec()
     var tailrecsum = (n: Number, result: Number = 0) -> 
                          if (n <= 0) result else tailrecsum(n - 1, result + n)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This annotation will confirm to us that we have defined a tail-recursive function.  If you apply this annotation to a non-tail-recursive function the compiler will respond with an error.
   }
@@ -105,14 +105,14 @@
 \subsection{The sample data}
 \begin{enumerate}[resume*]
 \item Create a simple array of arrays
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [0,1,[2,[3,[4,[5]]]]]
-  \end{lstlisting}
+  \end{verbatim}
 \item Apply \ttt{flatten} four times
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -125,14 +125,14 @@
 	)
       )
     )
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{The \ttt{rflatten} function}
 \begin{enumerate}[resume*]
 \item Create a recursive function that just traverses the arrays
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var rflatten = (a: Array) -> a map (
@@ -140,12 +140,12 @@
     )
     ---
     rflatten([0,1,[2,[3,[4,[5]]]]])
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     To see that all elements in the arrays of sub-arrays are being traversed, we only need to change the second \ttt{\$} in the if-expression to a literal value.
   }
 \item Apply \ttt{flatten} at the right level
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var rflatten = (a: Array) -> flatten(a map (
@@ -153,14 +153,14 @@
     ))
     ---
     rflatten([0,1,[2,[3,[4,[5]]]]])
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{A tail-recursive version of \ttt{rflatten}}
 \begin{enumerate}[resume*]
 \item Create a trail-recursive version of \ttt{rflatten}
-  \begin{lstlisting}
+  \begin{verbatim}
     @TailRec()
     var tailrflatten = (a: Array) -> 
       if ( 
@@ -168,7 +168,7 @@
       ) a else tailrflatten(flatten(a))
     ---
     tailrflatten([0,1,[2,[3,[4,[5]]]]])
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This solution is ingenious because we don't even need to piggyback the result as an argument.  Instead we recursively apply \ttt{flatten} for as long as the array contains arrays.  This \ttt{tailrflatten} is a top-to-bottom solution as compared the bottom-up approach we take with the \ttt{rflatten} function.
   }
@@ -186,43 +186,43 @@
 \item Navigate to the \ttt{mod4-flights-airports} flow
 \item Click on the DW processor in the source area of the flow
 \item Define the \ttt{traverse} function handling arrays
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(a: Array) = a map traverse($)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Recursively, traverse each one of the elements in the array.
   }
 \item Overload \ttt{traverse} to handle objects
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(a: Array) = a map traverse($)
     fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Recursively, traverse the each one of the keys and values of the object. 
   }
 \item Overload \ttt{traverse} to handle keys
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(a: Array) = a map traverse($)
     fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
     fun traverse(k: Key) = k
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     For the time being just return the key as is.  The reason is because we will apply the function and then we shall apply changes to these keys and visually identify our changes as we perform them.
   }
 \item Overload the \ttt{traverse} to handler strings
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(a: Array) = a map traverse($)
     fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
     fun traverse(k: Key) = k
     fun traverse(s: String) = s
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Again the time being just return the string as is for the same reason as above.
     \newline
     We only need to overload our \ttt{traverse} function for arrays, objects, keys, and strings because that is the only types we need to traverse.  If we had additional types then we must provide additional overloaded function definitions.
   }
 \item Apply the \ttt{traverse} function
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(a: Array) = a map traverse($)
     fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
     fun traverse(k: Key) = k
@@ -240,30 +240,30 @@
         $ reorder (8 to 0)
       )
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     There should be no affect seen in the preview.
   }
 \item Remove the extra leading space to the \ttt{ICAO} field
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(k: Key) = trim(k)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Notice the how the space is removed for all airports.  We are traversing the data!
   }
 \item Upper case all field names
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(k: Key) = upper(trim(k))
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We could potentially combine the field renaming we performed earlier on using this overloaded \ttt{traverse} function for keys.  We have to be careful, however, because all fields independent of depth will be renamed.
   }
 \item Lower case all strings
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverse(s: String) = lower(s)
-  \end{lstlisting}
+  \end{verbatim}
 \item Remove the \ttt{traverse} function application
-  \begin{lstlisting}
+  \begin{verbatim}
     payload map (
       $ mapObject (v,k,i) -> {(fs2rn[k] default k): v}
     )
@@ -274,42 +274,42 @@
     map (
       $ reorder (8 to 0)
     )
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{A more flexible solution}
 \begin{enumerate}[resume*]
 \item Define the \ttt{traverseFn} operating over arrays
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Very similar definition to \ttt{traverse} the only difference being an extra the argument \tt{fn}.  This \tt{fn} is a function that will contain the operations to be performed for the simple types, i.e. keys and strings.  This way we decouple operations from simple types and the complex types which we primarily need in order to traverse. 
   }
 \item Overload the \ttt{traverseFn} operating over objects
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
     fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
-  \end{lstlisting}
+  \end{verbatim}
 \item Overload the \ttt{traverseFn} operating over keys
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
     fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
     fun traverseFn(k: Key, fn) = fn(k)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Because we decouple the simple type from the complex type expressions and provide these simple type expressions through a \les{} we only need to apply this \les{} for keys. 
   }
 \item Overload the \ttt{traverseFn} operating over strings
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
     fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
     fun traverseFn(k: Key, fn) = fn(k)
     fun traverseFn(s: String, fn) = fn(s)
-  \end{lstlisting}
+  \end{verbatim}
 \item Apply \ttt{traverseFn}
-  \begin{lstlisting}
+  \begin{verbatim}
     fun traverseFn(a: Array, fn) = a map traverseFn($,fn)
     fun traverseFn(o: Object, fn) = o mapObject { (traverseFn($$,fn)): traverseFn($,fn) }
     fun traverseFn(k: Key, fn) = fn(k)
@@ -330,21 +330,21 @@
         else -> $
       }
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This \les{} is just a \ttt{match} operator making no changes currently to the keys and strings.  We will make this changes next.
   }
 \item Fix the \ttt{ICAO} and upper case all fields again
-  \begin{lstlisting}
+  \begin{verbatim}
     traverseFn (
       (e) -> e match {
         case k if (k is Key) -> upper(trim(k))
         else -> $
       }
     )
-  \end{lstlisting}
+  \end{verbatim}
 \item Lower case all strings again
-  \begin{lstlisting}
+  \begin{verbatim}
     traverseFn (
       (e) -> e match {
         case k if (k is Key) -> upper(trim(k))
@@ -352,7 +352,7 @@
         else -> $
       }
     )    
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
@@ -364,7 +364,7 @@
     There are plenty of values that are numbers and could be typecasted into a number as compared to just the string representation of that number.  Similarly, there is the \ttt{DATE} field that contains a date in a string denotation.
   }
 \item Apply \ttt{dw::Runtime::try} and try to typecast numbers
-  \begin{lstlisting}
+  \begin{verbatim}
     traverseFn (
       (e) -> e match {
         case k if (k is Key) -> upper(trim(k))
@@ -372,12 +372,12 @@
         else -> $
       }
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Every single value in our objects is now a \ttt{TryResult} structure.  Those with \ttt{success: true} contain the type-casted number, while those with \ttt{success: false} contain the error details.
   }
 \item Chain the \ttt{dw::Runtime::orElse} function
-  \begin{lstlisting}
+  \begin{verbatim}
     traverseFn (
       (e) -> e match {
         case k if (k is Key) -> upper(trim(k))
@@ -386,12 +386,12 @@
         else -> $
       }
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The documentation for \ttt{dw::Runtime::orElse} can be found \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-functions-orelse}{here}.
   }
 \item Apply \ttt{dw::Runtime::orElseTry} to typecast the \ttt{DATE} field
-  \begin{lstlisting}
+  \begin{verbatim}
     traverseFn (
       (e) -> e match {
         case k if (k is Key) -> upper(trim(k))
@@ -402,7 +402,7 @@
         else -> $
       }
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The documentation for \ttt{dw::Runtime::orElseTry} can be found \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-functions-orelsetry}{here}
   }

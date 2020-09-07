@@ -60,56 +60,56 @@
 \subsection{Construction}
 \begin{enumerate}[resume*]
 \item Create an empty object
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/java
     ---
     {}
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     DW is JSON-like, that is the designers of DW borrowed syntax and semantics from JSON.  As such, the semantics of \ttt{{}} in DW is object creation.   
   }
 \item Create an empty array
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/java
     ---
     []
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{Fields}
 \begin{enumerate}[resume*]
 \item Use the dot notation to access the \ttt{airline} field
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/java
     ---
     payload.airline    
-  \end{lstlisting}
+  \end{verbatim}
 \item Use the bracket notation to access the \ttt{airline} field
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/java
     ---
     payload["airline"]    
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Dynamically evaluating field names and accessing them can easily be achieved using this bracket notation.
   }
 \item Use the index 0 to access the \ttt{airline} field
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/java
     ---
     payload[0]
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Let me let you in a secret: Objects internally are represented as arrays—-field access is a facade
   }
 \item Create an object with repeating field names
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/java
     ---
@@ -118,12 +118,12 @@
       flight: 2,
       flight: 3
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Here lies the explanation as to why DW objects are stored internally as arrays.  An object containing duplicate field names can only access any of these duplicates fields other than the first through indexes.
     }
 \item Transform data into XML
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/xml
     ---
@@ -132,7 +132,7 @@
       flight: 2,
       flight: 3
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Because DW must support XML and because XML has no clue of collections other than repeating tags, how else do we expect to be able to generate XML with tags that repeat in DW if not for fields repeating inside DW objects.  It is ingenious!
   }
@@ -143,22 +143,22 @@
 \begin{enumerate}[resume*]
 \item Change the \ttt{output} to \ttt{application/dw}
 \item Concatenate strings using the \ttt{++} function
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     "The flight is operated by " ++ payload.airline
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Setting the \ttt{output} to \ttt{application/dw} should ONLY be done while statically testing in order to get additional information from the DW compiler/interpreter--i.e. we are debugging our code through Studio's preview.  Using \ttt{application/dw} will cause signifcant delays during runtime.
   }
 \item Concatenate strings using the \ttt{\$()} string sub-expression
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     "The flight is operated by $(payload.airline)"
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We have to ensure the expression inside \ttt{\$()} evaluates to a string or it is automatecally casted into a string, otherwise we will be getting type missmatch errors.
   }
@@ -168,27 +168,27 @@
 \subsection{Conditional expressions}
 \begin{enumerate}[resume*]
 \item \ttt{if then else} conditional
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     if (true) 1 else 0
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     DW being a functional programming language does not have any statements, as such this is a conditional expression that must evaluate to a value.
   }
 \item Nullity conditional
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload.airline default "Delta"
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This is a shortcut to the \ttt{if (payload.airline == null) "Delta" else payload.airline}
   }
 \item Conditional elements for objects
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -197,9 +197,9 @@
       (b: 2) if (false),
       c: 3
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Conditional elements for arrays
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -208,79 +208,79 @@
       (2) if (false),
       3
     ]
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 %%%%%%
 \subsection{Array and String access and Ranges}
 \begin{enumerate}[resume*]
 \item Retrieve the first element of an array
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,6,4,1,7][0]
-  \end{lstlisting}
+  \end{verbatim}
 \item Retrieve the last element of an array
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,6,4,1,7][-1]
-  \end{lstlisting}
+  \end{verbatim}
 \item Retrieve a subset of an array
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,6,4,1,7][1 to -2]    
-  \end{lstlisting}
+  \end{verbatim}
 \item Reverse the elements of an array
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,6,4,1,7][-1 to 0]
-  \end{lstlisting}
+  \end{verbatim}
 \item Retrieve the first character of string
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload.airline[0]
-  \end{lstlisting}
+  \end{verbatim}
 \item Retrieve the last character of a string
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload.airline[-1]
-  \end{lstlisting}
+  \end{verbatim}
 \item Retrieve a substring
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload.airline[0 to 2]
-  \end{lstlisting}
+  \end{verbatim}
 \item Reverse a string
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     payload.airline[-1 to 0]
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{Common functions and operators}
 \begin{enumerate}[resume*]
 \item \ttt{typeOf}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     typeOf({})
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This is a great function for debugging--again and it will help us identify the types of
     data we are working with.  We will use it a few times to gain clarity when all else has
@@ -289,32 +289,32 @@
     The documentation for this function can be see \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-typeof}{here}.
   }
 \item \ttt{sizeOf}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     sizeOf([2,6,4,1,7])
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The documentation for this function can be see \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-sizeof}{here}.
   }
 \item \ttt{contains}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,6,4,1,7] contains 2
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The documentation for this function can be see \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-core-functions-contains}{here}.
   }
 \item \ttt{is}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     {} is Object    
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The \ttt{is} operator is for testing type membership.
   }
@@ -324,19 +324,19 @@
 \subsection{Expression chaining}
 \begin{enumerate}[resume*]
 \item Iterate the \ttt{[2,5,3,7,8]} and increment each number by one
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,5,3,7,8] map $+1
-  \end{lstlisting}
+  \end{verbatim}
 \item Chain another expression and substract each number by one
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     [2,5,3,7,8] map $+1 map $-1
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Because DW supports infix function invocation for all functions with exactly two arguments, we are able to chain one function after the other making our code more readable.
   }
@@ -360,15 +360,15 @@
   \newline
   Transform the XML into a JSON collection containing the objects found under \ttt{return} tags
 \item Use the \ttt{..*} selector to perform a recursive search and find fields named \ttt{return}
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return
-  \end{lstlisting}
+  \end{verbatim}
 \item Go to the first element in the sample data under the \ttt{return} tag
 \item Add another \ttt{return} tag with a simple value
 \lstset{language=XML,
   morekeywords={return,10}
 }
-\begin{lstlisting}
+\begin{verbatim}
   <return>
     <airlineName>Delta</airlineName>
     <code>A1B2C3</code>
@@ -380,19 +380,19 @@
     <price>400.0</price>
     <return>10</return>
   </return>
-\end{lstlisting}
+\end{verbatim}
 \item Illustrate that \ttt{..*} performs a breadth-first search and the output contains an extra result all the way to the bottom. 
 \item Use the \ttt{.*} selector to perform a search at the right level--no longer do we receive the next \ttt{return} result. 
-  \begin{lstlisting}
+  \begin{verbatim}
     payload.findflightResponse.*return
-  \end{lstlisting}
+  \end{verbatim}
 \item Restore your sample data by removing the additional nested \ttt{<return>10</return>} XML tag.
 \item Ensure you make use of the namespace from the input data.  Ignoring namespaces is not advised unless you are certain the data will always look the same, you will never have another \ttt{findFlightResponse} tag with a different meaning
-  \begin{lstlisting}
+  \begin{verbatim}
     ns ns2 http://soap.training.mulesoft.com/
     ---
     payload.ns2#findFlightResponse.*return
-  \end{lstlisting}
+  \end{verbatim}
 \item Copy all the data from the preview
 \item Create a new file under \ttt{src/test/resources} and call it \ttt{flights.json}
 \end{enumerate}
@@ -415,7 +415,7 @@
   \end{enumerate}
 \item Create an appropriate XML for just two elements of the inputs
   \lstset{language=dw}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/xml
     ---
@@ -423,47 +423,47 @@
       flight: payload[0],
       flight: payload[1]
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Set the output to \ttt{application/dw} and identify the internal data structure we must aim for when generating XML
 \item We need to generate XML for all elements not just the first two, change the code so that we now iterate over the collection of data in the \ttt{payload}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     flights: payload map {
       flight: $
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Switch the output back to XML results in errors because we are still having an array in our data structure
 \item Change the output yet again to \ttt{application/dw}
 \item Eliminate the array by enclosing the \ttt{map} in \ttt{$\{()\}$}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     flights: {(payload map {
       flight: $
     })}
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The semantics of \ttt{()} are the usual precedence operators, however \textbf{the semantics of parenthesis change when they appear on their own within \ttt{$\{\}$} enclosing (i) objects or (ii) arrays of objects} to the following: \textbf{Break every single object into pairs of keys and values}. The outer \ttt{$\{\}$} are there to construct a new object from all the pairs of keys and values. Hence why we end up with single object containing all the keys and their associated values for each object in the collection.
   }
 \item \emph{So far we solved this transformation by following a top-to-bottom solution.  You can also solve this transformation by following a bottom-up approach.}
   \newline
   Change the expression back to just \ttt{payload} and eliminate the array first!
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     flights: {(payload)}
-  \end{lstlisting}
+  \end{verbatim}
 \item Organize the records around their own tag before we destroy the array and collapse the first level of containing objects.
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     flights: {(payload map flight: $)}
-  \end{lstlisting}
+  \end{verbatim}
   \emph{Note that objects with a single field can have the \ttt{$\{\}$} omitted}
 \item Finally, change the output back to XML
   

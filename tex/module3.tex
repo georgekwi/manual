@@ -20,20 +20,20 @@
 \subsection{Nullity and function signatures}
 \begin{enumerate}[resume*]
 \item Explore nullity
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     typeOf(null)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     By looking at the preview we can quickly realize that DW's typing system separates nullity from all other types.  The benefit of such separation is that you can catch a good chunk of nullity errors at compile time. 
   }
 \item Replace the expression with just \ttt{sizeOf}
 \item Examine the signature in the preview
-  \begin{lstlisting}
+  \begin{verbatim}
     (arg0:Array | Object | Binary | String) -> ???
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     \ttt{sizeOf} expects a single argument.  This argument can be one of listed types separated by a pipe symbol (\ttt{|}).  This \ttt{|} indicates that this function has been overloaded.
   }
@@ -43,9 +43,9 @@
   }
 \item Replace the expression with just \ttt{map}
 \item Examine the signature in the preview
-  \begin{lstlisting}
+  \begin{verbatim}
     (arg0:Array | Null, arg1:Function | Function) -> ???
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     \ttt{map} is also an overloaded function, but this time it is a function that takes two arguments.  If we were to reconstruct these overloaded functions defining \ttt{map} then we can tell (1) that there are two overloaded functions because we have a single pipe separating the types of the arguments and (2) the arguments of these overloaded functions will look as follows by using the position of the corresponding arguments:
     \begin{itemize}
@@ -59,59 +59,59 @@
 \subsection{Overload a function}
 \begin{enumerate}[resume*]
 \item Create a function that accepts the \ttt{Null} type
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     fun dataMatcher(n: Null) = "Null found"
     ---
     dataMatcher(null)
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The \ttt{:} separates the name of the argument with the type of the argument.  The same type of syntax can be used to specify types when needed.
     \newline
     You have created a function that takes only null values.
   }
 \item Pass an empty array instead
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     fun dataMatcher(n: Null) = "Null found"
     ---
     dataMatcher([])
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     You are now getting errors because our function is not defined to accept arrays.
   }
 \item Overload the function to also accept arrays
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     fun dataMatcher(n: Null) = "Null found"
     fun dataMatcher(a: Array) = "Array found"
     ---
     dataMatcher([])
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Only a function declared through \lstinline{fun} can be overloaded--in other words you cannot overload \lep
   }
 \item Display the signature of the \ttt{dataMatcher} function
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     fun dataMatcher(n: Null) = "Null found"
     fun dataMatcher(a: Array) = "Array found"
     ---
     dataMatcher
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the signature
-  \begin{lstlisting}
+  \begin{verbatim}
     (arg0:Null | Array) -> ???
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The signature clearly show the types the function accepts.
   }
 \item Overload the function for \lstinline{Object}, \lstinline{Number}, and \lstinline{String}
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     fun dataMatcher(n: Null) = "Null found"
@@ -121,11 +121,11 @@
     fun dataMatcher(s: String) = "String found"
     ---
     dataMatcher
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the signature one last time
-  \begin{lstlisting}
+  \begin{verbatim}
     (arg0:Null | Array | Object | Number | String) -> ???
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%
@@ -139,43 +139,43 @@
 \item Stay under the \ttt{mod3-data-matcher} flow
 \item Delete the current expression
 \item Use the \ttt{match} operator to match \ttt{Null} values
-  \begin{lstlisting}
+  \begin{verbatim}
     null match {
       case null -> "Null found"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This is the \ttt{match} operator, not to be confused with the \ttt{match} function.
   }
 \item Match the number 10
-  \begin{lstlisting}
+  \begin{verbatim}
     10 match {
       case null -> "Null found"
       case 10 -> "Ten"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Cases are evaluated in order of appearance, ensure more general cases are below the more specific ones.
   }
 \item Match the string ``ABC''
-  \begin{lstlisting}
+  \begin{verbatim}
     "ABC" match {
       case null -> "Null found"
       case 10 -> "Ten"
       case "ABC" -> "Alphabet"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Match the empty array
-  \begin{lstlisting}
+  \begin{verbatim}
     [] match {
       case null -> "Null found"
       case 10 -> "Ten"
       case "ABC" -> "Alphabet"
       case [] -> "Empty array found"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Match the empty object
-  \begin{lstlisting}
+  \begin{verbatim}
     {} match {
       case null -> "Null found"
       case 10 -> "Ten"
@@ -183,9 +183,9 @@
       case [] -> "Empty array found"
       case {} -> "Empty object found"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Add elements to the object
-  \begin{lstlisting}
+  \begin{verbatim}
     {a: 1} match {
       case null -> "Null found"
       case 10 -> "Ten"
@@ -193,7 +193,7 @@
       case [] -> "Empty array found"
       case {} -> "Empty object found"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We are getting errors because there is no case matching this expression.
   }
@@ -202,7 +202,7 @@
     There is no way to match inner data of objects and arrays directly in a case--i.e. adding inner data at the case level will only result in syntax errors.
   }
 \item Add the default case for when there is no case matching your data
-  \begin{lstlisting}
+  \begin{verbatim}
     {a: 1} match {
       case null -> "Null found"
       case 10 -> "Ten"
@@ -211,7 +211,7 @@
       case {} -> "Empty object found"
       else -> {message: "No match", data: $}
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     In the body of the \ttt{else} case we are back-referencing our data with a single \ttt{\$}.  We can back-reference our data in all other cases in the same way.  Further along we shall see how to define our own placeholder to back-reference our data so that we don't depend on a single \ttt{\$}
   }
@@ -225,12 +225,12 @@
 \begin{enumerate}[resume*]
 \item Remove or comment-out the expression
 \item Match the \ttt{Null} type
-  \begin{lstlisting}
+  \begin{verbatim}
     null match {
       case is Null -> "Null found"
       else -> $
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The \ttt{is} operator is used in the first case to match all values of type \lstinline{Null}.
   }
@@ -239,7 +239,7 @@
     We pro-actively set the default case to just evaluate back to the expression we are matching.
   }
 \item Match \lstinline{Number}, \lstinline{String}, \lstinline{Object}, and \lstinline{Array} types
-  \begin{lstlisting}
+  \begin{verbatim}
     [] match {
       case is Null -> {message: "Null found", data: $}
       case is Number -> {message: "Number found", data: $}
@@ -248,7 +248,7 @@
       case is Array -> {message: "Array found", data: $}
       else -> {message: "No match", data: $}
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We are back-referencing the values we are matching using the \ttt{\$} for all our cases.
   }
@@ -258,7 +258,7 @@
 \subsection{Matching by any condition}
 \begin{enumerate}[resume*]
 \item Replace the \ttt{\$} with a placeholder of our own choosing
-  \begin{lstlisting}
+  \begin{verbatim}
     [1] match {
       case n if (n is Null) -> {message: "Null found", data: n}
       case n if (n is Number) -> {message: "Number found", data: n}
@@ -267,7 +267,7 @@
       case a if (a is Array) -> {message: "Array found", data: a}
       else other -> {message: "No match", data: other}
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     These new placeholders are arbitrary, they can be anything of your choosing, from single letter to words--very similar to declaring variables.
   }
@@ -276,13 +276,13 @@
     Using this new syntax to define our placeholders and conditionals opens an unlimited set of Boolean expressions that could be defined on a per case basis.
   }
 \item Use pattern matching to distinguish the empty array, the array that has less than or equal to 100 elements, and the array that has larger than 100 elements
-  \begin{lstlisting}
+  \begin{verbatim}
     (0 to 200) match {
       case [] -> "Empty Array" 
       case a if (a is Array and sizeOf(a) <= 100) -> "Non-empty array with less or equal to 100 elements"
       else a -> "Non-empty array with larger than 100 elements"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     For this use case we combine all of the above:
     \begin{itemize}
@@ -314,12 +314,12 @@
 \subsection{The error 10 / 0}
 \begin{enumerate}[resume*]
 \item Introduce an error
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     10 / 0
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     When the evaluation of DW expressions result in errors the whole expression errors out--there are no partial results
   }
@@ -347,14 +347,14 @@
     The return value is a \ttt{TryResult<T>} structure.  Thankfully, we have \href{https://docs.mulesoft.com/mule-runtime/4.3/dw-runtime-types}{documentation} that describes this structure.
   }
 \item Test the \ttt{10 / 0} expression
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     dw::Runtime::try(() -> 10 / 0)
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the result
-  \begin{lstlisting}
+  \begin{verbatim}
     {
       success: false,
       error: {
@@ -366,24 +366,24 @@
         ]
       }
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We no longer have errors preventing us from getting results in the preview.  Instead we are looking at a \ttt{TryResult} structure where the \ttt{success} field is set to \ttt{false} indicating that our expression has errors.  Finally the error's description can be seen in the \ttt{error} field.
   }
 \item Test the \ttt{10 / 2} expression
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
     dw::Runtime::try(() -> 10 / 2)
-  \end{lstlisting}
+  \end{verbatim}
 \item Examine the result
-  \begin{lstlisting}
+  \begin{verbatim}
     {
       success: true,
       result: 5.0
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Similarly we have \ttt{success} set to \ttt{true} but instead of \ttt{error} we have the \ttt{result} field set to the value our expression evaluates to.
   }
@@ -394,7 +394,7 @@
 \subsection{The \ttt{guard} function}
 \begin{enumerate}[resume*]
 \item Chain the \ttt{match} operator
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     ---
@@ -402,28 +402,28 @@
       case tr if (tr.success) -> tr.result
       else tr -> tr.error.message
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     When \ttt{success} is set to \ttt{true} just return the \ttt{result} otherwise arbitrarily just return the \ttt{error.message} 
   }
 \item Extrapolate to a function that guards against errors
-  \begin{lstlisting}
+  \begin{verbatim}
     var guard = (fn) -> dw::Runtime::try( fn ) match {
       case tr if (tr.success) -> tr.result
       else tr -> tr.error.message
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     There is no need for a \ttt{guard} function.  There are additional error handling functions that we shall see further along the material that provide for complete and flexible error handling.  Nonetheless, going through the refactoring of our code into a function allows us to take a peek on functional programming.
   }
 \item Test the \ttt{guard} function with a correct expression
-  \begin{lstlisting}
+  \begin{verbatim}
     guard( () -> 10 / 2 )
-  \end{lstlisting}
+  \end{verbatim}
 \item Test the \ttt{guard} function with an erroneous expression
-  \begin{lstlisting}
+  \begin{verbatim}
     guard( () -> 10 / 0 )
-  \end{lstlisting}  
+  \end{verbatim}  
 \end{enumerate}
 
 
@@ -442,23 +442,23 @@
 \begin{enumerate}
 \item Stay in the \ttt{mod3-errors} flow
 \item Create an array of string dates and assigned it in a variable
-  \begin{lstlisting}
+  \begin{verbatim}
     var dates = [
       "2020/01/01",
       "20100101",
       "2000/01/01"
     ]
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     It is the second date that is malformed and it is the cause of failure of our transformation.
   }
 \item Remove or comment out the current expression
 \item Iterate over dates and cast into a \ttt{Date} type
-  \begin{lstlisting}
+  \begin{verbatim}
     dates map (
       $ as Date {format: "yyyy/MM/dd"}
     )
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     There is an error thrown telling us that the second-string date cannot be casted.
   }
@@ -468,20 +468,20 @@
 \subsection{Using \ttt{guard} and obtaining partial results}
 \begin{enumerate}[resume*]
 \item Delegate the execution of the type-casting expression to the \ttt{guard} function
-  \begin{lstlisting}
+  \begin{verbatim}
     dates map (
       guard( () -> $ as Date {format: "yyyy/MM/dd"} )
     ) 
-  \end{lstlisting}
+  \end{verbatim}
 \item Finally \ttt{filter} for \ttt{Date} types and get your partial results while ignoring the rest
-  \begin{lstlisting}
+  \begin{verbatim}
     dates map (
       guard( () -> $ as Date {format: "yyyy/MM/dd"} )
     )
     filter ($ is Date)
-  \end{lstlisting}
+  \end{verbatim}
 \item We can expand on this solution such that we also obtain the errors
-  \begin{lstlisting}
+  \begin{verbatim}
     do {
       var parsedDates = dates map (
       guard( () -> $ as Date {format: "yyyy/MM/dd"} )
@@ -492,7 +492,7 @@
 	failure: parsedDates filter  not ($ is Date)
       }
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Note to instructors: This is a good exercise to have students work on their own for ``bonus points'', after all we have already covered all topics they need to know to get it done.
   }

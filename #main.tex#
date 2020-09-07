@@ -34,7 +34,7 @@
   },
   sensitive=true,
   morecomment=[l]{//},
-  morecomment=[s]{/*}{*/}
+xb  morecomment=[s]{/*}{*/}
 }
 \lstset{
   language=dw,

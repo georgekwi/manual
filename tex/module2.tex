@@ -24,23 +24,23 @@ The JSON data structure is enhanced as follows:
 \item Turn on the preview
 \item Change the output to \ttt{application/dw}
 \item Change the body of the expression to
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/json
     ---
     payload..*return
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{Create a variable}
 \begin{enumerate}[resume*]
 \item Create a variable visible throughout the DW expression
-  \begin{lstlisting}
+  \begin{verbatim}
     var theTotalSeats = 400
-  \end{lstlisting}
+  \end{verbatim}
 \item Add the \ttt{totalSeats} field to the existing list of objects, do it for a single object then do it for all objects in the collection
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/json
     var theTotalSeats = 400
@@ -48,9 +48,9 @@ The JSON data structure is enhanced as follows:
     payload..*return[0] ++ {
       totalSeats: theTotalSeats
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Do it now for all elements
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/json
     var theTotalSeats = 400
@@ -58,12 +58,12 @@ The JSON data structure is enhanced as follows:
     payload..*return map ($ ++ {
       totalSeats: theTotalSeats
     })
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     \ttt{++} we have already seen when concatenating strings we see it operating with objects as well because it is overloaded, more on overloading soon.
   }
 \item There is another way to add a field(s) to an existing object
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/json
     var theTotalSeats = 400
@@ -72,7 +72,7 @@ The JSON data structure is enhanced as follows:
       ($)
       totalSeats: theTotalSeats
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We have already seen $\{()\}$ when eliminating arrays, here these $()$ are applied to single objects with the same effect; i.e. destroy the object and retrieve the basic building blocks of the object, that is the keys and the associated values.  These basic building blocks are then introduced in the new object created by the outermost object.}
   \newline
@@ -85,7 +85,7 @@ The JSON data structure is enhanced as follows:
 \subsection{Fix the Boing typo}
 \begin{enumerate}[resume*]
 \item Add another field containing the \ttt{planeType} value
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var theTotalSeats=400
@@ -95,12 +95,12 @@ The JSON data structure is enhanced as follows:
       planeType: $.planeType,
       totalSeats: theTotalSeats
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph {
     A quick inspection of the output identifies two \ttt{planeType} fields containing the same value.  This is a problem because we are interested in a single field containing the corrected spelling for Boeing.  We should remove one of them and removing the first one is the right choice because this first one is the one we have no control over.  The second \ttt{planeType} is the one we have full control because we are adding it!
   }
 \item Remove the first \ttt{planeType} field
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var theTotalSeats=400
@@ -110,12 +110,12 @@ The JSON data structure is enhanced as follows:
       planeType: $.planeType,
       totalSeats: theTotalSeats
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This unary \ttt{-} operator is overloaded to also apply to objects and remove fields.  You can keep applying it successively if you want to remove multiple fields--e.g. \ttt{\$ - "planeType" - "price"} 
   }
 \item Fix the \ttt{Boing} typo
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var theTotalSeats=400
@@ -125,7 +125,7 @@ The JSON data structure is enhanced as follows:
       planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: theTotalSeats
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     It is worth noting that \ttt{replace} and \ttt{with} are two separate functions where the result of \ttt{replace} is the first argument to \ttt{with}.  It makes the code ``talk to you in English''!  This is the beauty of infix function invocation. 
   }
@@ -135,7 +135,7 @@ The JSON data structure is enhanced as follows:
 \subsection{Calculate the total seats as a function of the \ttt{planeType} using \ttt{fun}}
 \begin{enumerate}[resume*]
 \item Create and apply a function and start unit-testing it
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var theTotalSeats = 400
@@ -146,7 +146,7 @@ The JSON data structure is enhanced as follows:
       planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeats($.planeType)
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     \ttt{pt} is a user defined arbitrary name, denoting the sole input parameter
   }
@@ -155,7 +155,7 @@ The JSON data structure is enhanced as follows:
     By unit testing we refer to the method by which small chunks of our functionality is tested before we put them all together.  We are not referring to automated/regression testing.
   }
 \item Create the condition that identifies 737s over the other types of planes
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
     output application/dw
     var theTotalSeats = 400
@@ -166,9 +166,9 @@ The JSON data structure is enhanced as follows:
       planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeats($.planeType)
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Enclose the condition in an \ttt{if} expression
-  \begin{lstlisting}
+  \begin{verbatim}
     fun getTotalSeats(pt) = if (
       pt contains "737"
     ) 150 else 300
@@ -178,23 +178,23 @@ The JSON data structure is enhanced as follows:
       planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeats($.planeType)
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Change the function expression to allow for the 727 and 707 to be set to 150 seats
-  \begin{lstlisting}
+  \begin{verbatim}
     fun getTotalSeats(pt) = if (
       pt contains "737" or
       pt contains "707" or
       pt contains "727"
     ) 150 else 300
-  \end{lstlisting}
+  \end{verbatim}
 \item Fix the error \ttt{Cannot coerce String (737) to Boolean}
-  \begin{lstlisting}
+  \begin{verbatim}
     fun getTotalSeats(pt) = if (
       (pt contains "737") or
       (pt contains "707") or
       (pt contains "727")
     ) 150 else 300
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Parenthesizing to enforce precedence is required in this context because \ttt{or} has higher precedence vs \ttt{contains}
   }
@@ -219,42 +219,42 @@ The JSON data structure is enhanced as follows:
 \subsection{Calculate efficiently the total seats as a function of \ttt{planeType} using a lambda expression}
 \begin{enumerate}[resume*]
 \item Create another function named \ttt{getTotalSeatsL}
-  \begin{lstlisting}
+  \begin{verbatim}
     var getTotalSeatsL = (pt) -> pt
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     L stands for Lambda, we store an anonymous function to a variable; i.e. we provide this anonymous function
     with a name.  Additionally, the body of this function evaluates into the argument we passed--this encourages
     unit testing.
   }
 \item Apply the function to in the expression and get results
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType)
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Applying the function as soon as possible and getting results as we further develop our function
     will only facilitate unit testing and code correctness.
   }
 \item Get the last three characters of the plane type
-  \begin{lstlisting}
+  \begin{verbatim}
     var getTotalSeatsL = (pt) -> pt[-3 to -1] as Number
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We can now use the number to compare instead of doing a string search which will speed up the execution of
     our code.
   }
 \item Introduce closures (i.e. localized declarations) using \ttt{do \{\}}
-  \begin{lstlisting}
+  \begin{verbatim}
     var getTotalSeatsL = pt -> do {
       var pn = pt[-3 to -1] as Number
       ---
       pn
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     A \href{https://en.wikipedia.org/wiki/Closure_(computer_programming)}{closure} is a construct that allows for
     the declaration of variables, functions, etc with a localized scope.  The \ttt{---} serve the same purpose
@@ -262,13 +262,13 @@ The JSON data structure is enhanced as follows:
     declarations and the expression.
   }
 \item Add the conditional to the function
-  \begin{lstlisting}
+  \begin{verbatim}
     var getTotalSeatsL = pt -> do {
       var pn = pt[-3 to -1] as Number
       ---
       if (pn == 737 or pn == 707 or pn ==727) 150 else 300
     }    
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     You can use either one of these two functions to calculate the total seats; however, if you would like to use
     features such as function overloading you MUST stick with the \ttt{fun}.
@@ -279,7 +279,7 @@ The JSON data structure is enhanced as follows:
 \subsection{Adjust price for currency}
 \begin{enumerate}[resume*]
 \item Create an object that contains currency exchange rates
-  \begin{lstlisting}
+  \begin{verbatim}
     var xes = {
       USD: 1.0,
       EUR: 0.9,
@@ -289,26 +289,26 @@ The JSON data structure is enhanced as follows:
       MXN: 25,
       INR: 72
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We hard-code these currencies because we are within the confines of training.  We can easily fetch these
     currencies dynamically from any data source and generate the map.
   }
 \item Create a function to calculate the price for a currency
-  \begin{lstlisting}
+  \begin{verbatim}
     var adjustFor = (p,c) -> p * xes[c]
-  \end{lstlisting}
+  \end{verbatim}
 \item Apply the function in prefix syntax
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
       totalSeats: getTotalSeatsL($.planeType),
       priceEUR: adjustFor($.price,"EUR")
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Apply the function in infix syntax
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
@@ -316,7 +316,7 @@ The JSON data structure is enhanced as follows:
       priceEUR: adjustFor($.price,"EUR"),
       priceGBP: $.price adjustFor "GBP"
     }    
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     Functions with exactly two arguments get this infix application support!  In fact, infix function
     application is encouraged because (1) it is natural in its application, (2) no need to use excessive
@@ -352,14 +352,14 @@ The JSON data structure is enhanced as follows:
 \item Switch to the XML view
 \item Locate the DW you just created
 \item Remove the \lstinline!CDATA! tag
-  \begin{lstlisting}
+  \begin{verbatim}
     <![CDATA[%dw 2.0 output application/java --- {}]]>
-  \end{lstlisting}
+  \end{verbatim}
 \item Introduce the \ttt{/} closing to the opening \ttt{<ee:set-payload />} tag, this should automatically remove the explicit closing tag
 \item Add the attribute \ttt{resource} to the \ttt{<ee:set-payload />} tag
-  \begin{lstlisting}
+  \begin{verbatim}
     <ee:set-payload resource="dw/transforms/mod2/functions.dwl" />
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     This is the only way you could reuse the full transformation, i.e. by modifying the XML.  Had you gone inside
     the UI and attempt to reuse the file, you would be overwriting it!  That pencil button is a "one way trip",
@@ -392,9 +392,9 @@ The JSON data structure is enhanced as follows:
 \item In the text field type \ttt{dw/modules}
 \item Create a new file under \ttt{dw.modules} and name it \ttt{Currency.dwl}
 \item Type on line 1
-  \begin{lstlisting}
+  \begin{verbatim}
     %dw 2.0
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     DW modules can only contain declarations.  Declarations such as variables, function, types, etc.
   }
@@ -408,7 +408,7 @@ The JSON data structure is enhanced as follows:
 \begin{enumerate}[resume*]
 \item Go back to the DW processor under \ttt{mod2-reuse}
 \item Use the module by fully qualifying the function to adjust the price for the CAD currency
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
@@ -417,13 +417,13 @@ The JSON data structure is enhanced as follows:
       priceGBP: $.price adjustFor "GBP",
       priceCAD: $.price dw::modules::Currency::adjustFor "CAD"
     }    
-  \end{lstlisting}
+  \end{verbatim}
 \item Import the new module below the output directive
-  \begin{lstlisting}
+  \begin{verbatim}
     import dw::modules::Currency
-  \end{lstlisting}
+  \end{verbatim}
 \item Use the module again this time by taking advantage of the \ttt{import} to adjust the price for AUD
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
@@ -433,13 +433,13 @@ The JSON data structure is enhanced as follows:
       priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
       priceAUD: $.price Currency::adjustFor "AUD"
     }      
-  \end{lstlisting}
+  \end{verbatim}
 \item Import the module again and provide an an alias to the module
-  \begin{lstlisting}
+  \begin{verbatim}
     import dw::modules::Currency as Curr
-  \end{lstlisting}
+  \end{verbatim}
 \item Use the module through the \ttt{Curr} alias next
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
@@ -450,13 +450,13 @@ The JSON data structure is enhanced as follows:
       priceAUD: $.price Currency::adjustFor "AUD",
       priceMXN: $.price Curr::adjustFor "MXN"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Import all declarations to the current namespace
-  \begin{lstlisting}
+  \begin{verbatim}
     import * from dw::modules::Currency
-  \end{lstlisting}
+  \end{verbatim}
 \item Use directly the \ttt{adjustFor} function
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
@@ -468,18 +468,18 @@ The JSON data structure is enhanced as follows:
       priceMXN: $.price Curr::adjustFor "MXN",
       priceINR: $.price adjustFor "INR"
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     There is also an inline version of the \ttt{adjustFor} function which takes precedence.
     As such we are not using the function provided by the module.  We can very easily
     verify by changing the body of the inline function, just change the body to 1000.
   }
 \item Modify the last \ttt{import} to selectively import declarations and provide them with aliases
-  \begin{lstlisting}
+  \begin{verbatim}
     import adjustFor as adj4 from dw::modules::Currency
-  \end{lstlisting}
+  \end{verbatim}
 \item Use the \ttt{adj4} alias
-  \begin{lstlisting}
+  \begin{verbatim}
     payload..*return map {
       ($ - "planeType"),
       planeType: $.planeType replace /Boing/ with "Boeing",
@@ -491,7 +491,7 @@ The JSON data structure is enhanced as follows:
       priceMXN: $.price Curr::adjustFor "MXN",
       priceINR: $.price adj4 "INR"
     }
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}  
 
 %%
@@ -515,7 +515,7 @@ The JSON data structure is enhanced as follows:
 \subsection{Add the KPI section}
 \begin{enumerate}[resume*]
 \item Add an object and set the record of flights to the object's \ttt{data} field
-  \begin{lstlisting}
+  \begin{verbatim}
     {
       data: payload..*return map {
 	($ - "planeType"),
@@ -530,9 +530,9 @@ The JSON data structure is enhanced as follows:
       }
       
     }
-  \end{lstlisting}
+  \end{verbatim}
 \item Add an \ttt{kpi} field above the \ttt{data} field and assign an empty object to it
-  \begin{lstlisting}
+  \begin{verbatim}
     {
       kpi: {
 	
@@ -549,7 +549,7 @@ The JSON data structure is enhanced as follows:
 	priceINR: $.price adj4 "INR"
       }
     }
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     We will use this new field to store the calculated KPIs in subsequent steps of this WT.
   }
@@ -559,15 +559,15 @@ The JSON data structure is enhanced as follows:
 \subsection{Assert all flights are Delta operated}
 \begin{enumerate}[resume*]
 \item Import the \ttt{Arrays} module
-  \begin{lstlisting}
+  \begin{verbatim}
     import every,some,countBy,sumBy from dw::core::Arrays
-  \end{lstlisting}
+  \end{verbatim}
 \item Use the \ttt{every} function to assert whether all flights are Delta operated
-  \begin{lstlisting}
+  \begin{verbatim}
     kpi: {
       allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta"
     },
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     You may want to refactor your code so that you execute \ttt{payload..*return} once.  You already have seen how to do it, consider it a bonus exercise.
   }
@@ -577,47 +577,47 @@ The JSON data structure is enhanced as follows:
 \subsection{Assert the existence of full flights}
 \begin{enumerate}[resume*]
 \item Use the \ttt{some} to assert whether there are any full flights
-  \begin{lstlisting}
+  \begin{verbatim}
     kpi: {
       allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
       anyFullFlights: payload..*return some ($.emptySeats == 0)
     },
-  \end{lstlisting}
+  \end{verbatim}
   \emph{
     The result is \ttt{false}, i.e. there are no full flights.  However, the second to last flight is a full flight because the \ttt{emptySeats} tag is set to 0.  The problem lies with the comparison--we are comparing a string with a number.  You can either use a type cast to \ttt{\$.emptySeats as Number == 0} or the equality operator \ttt{\textasciitilde=} that autocasts its arguments.
   }
 \item Use the operator \ttt{\textasciitilde=} to fix the \ttt{Boolean} condition
-  \begin{lstlisting}
+  \begin{verbatim}
     kpi: {
       allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
       anyFullFlights: payload..*return some ($.emptySeats ~= 0)
     },
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{Calculate the number of full flights}
 \begin{enumerate}[resume*]
 \item Calculate the number of full flights
-  \begin{lstlisting}
+  \begin{verbatim}
     kpi: {
       allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
       anyFullFlights: payload..*return some ($.emptySeats ~= 0),
       fullFlightsCount: payload..*return countBy ($.emptySeats ~= 0)
     },
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
 
 %%%%%%
 \subsection{Sum the total number of empty seats across all flights}
 \begin{enumerate}[resume*]
 \item Sum up all the \ttt{emptySeats} across all flights
-  \begin{lstlisting}
+  \begin{verbatim}
     kpi: {
       allDeltaFlights: payload..*return every (e) -> e.airlineName == "Delta",
       anyFullFlights: payload..*return some ($.emptySeats ~= 0),
       fullFlightsCount: payload..*return countBy ($.emptySeats ~= 0),
       totalEmptySeats: payload..*return sumBy $.emptySeats
     },    
-  \end{lstlisting}
+  \end{verbatim}
 \end{enumerate}
