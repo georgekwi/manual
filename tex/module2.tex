@@ -518,15 +518,15 @@ The JSON data structure is enhanced as follows:
   \begin{verbatim}
     {
       data: payload..*return map {
-	($ - "planeType"),
-	planeType: $.planeType replace /Boing/ with "Boeing",
-	totalSeats: getPlaneTypeL($.planeType),
-	priceEUR: adjustFor($.price,"EUR"),
-	priceGBP: $.price adjustFor "GBP",
-	priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
-	priceAUD: $.price Currency::adjustFor "AUD",
-	priceMXN: $.price Curr::adjustFor "MXN",
-	priceINR: $.price adj4 "INR"
+        ($ - "planeType"),
+        planeType: $.planeType replace /Boing/ with "Boeing",
+        totalSeats: getPlaneTypeL($.planeType),
+        priceEUR: adjustFor($.price,"EUR"),
+        priceGBP: $.price adjustFor "GBP",
+        priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
+        priceAUD: $.price Currency::adjustFor "AUD",
+        priceMXN: $.price Curr::adjustFor "MXN",
+        priceINR: $.price adj4 "INR"
       }
       
     }
@@ -535,18 +535,18 @@ The JSON data structure is enhanced as follows:
   \begin{verbatim}
     {
       kpi: {
-	
+        
       },
       data: payload..*return map {
-	($ - "planeType"),
-	planeType: $.planeType replace /Boing/ with "Boeing",
-	totalSeats: getPlaneTypeL($.planeType),
-	priceEUR: adjustFor($.price,"EUR"),
-	priceGBP: $.price adjustFor "GBP",
-	priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
-	priceAUD: $.price Currency::adjustFor "AUD",
-	priceMXN: $.price Curr::adjustFor "MXN",
-	priceINR: $.price adj4 "INR"
+        ($ - "planeType"),
+        planeType: $.planeType replace /Boing/ with "Boeing",
+        totalSeats: getPlaneTypeL($.planeType),
+        priceEUR: adjustFor($.price,"EUR"),
+        priceGBP: $.price adjustFor "GBP",
+        priceCAD: $.price dw::modules::Currency::adjustFor "CAD",
+        priceAUD: $.price Currency::adjustFor "AUD",
+        priceMXN: $.price Curr::adjustFor "MXN",
+        priceINR: $.price adj4 "INR"
       }
     }
   \end{verbatim}
