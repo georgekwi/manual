@@ -158,7 +158,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Parse the CSV airports}
 \begin{enumerate}[resume*]
 \item Navigate back to \ttt{mod4} mule configuration file
-\item Create a new flow named \ttt{mod4-read-parse-file}
+\item Create a new flow named \ttt{mod4-read-parse-airports}
 \item Drop a DW to the process area of the flow
 \item Turn on the preview
 \item Change the output to \ttt{application/dw}
@@ -430,7 +430,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     \newline
     The growth of \ttt{N*M} is exponential or approaches an exponential growth.  When performing lookups ensure we have atomic lookups as compared searching arrays.  The ideal data structure to perform such atomic lookups is a map structure.
   }
-\item Go to the DW processor of the \ttt{mod4-read-parse-file} flow
+\item Go to the DW processor of the \ttt{mod4-read-parse-airports} flow
 \item Change the airports array into an object (aka map)
   \begin{verbatim}
     %dw 2.0
@@ -485,24 +485,24 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
   }
 \end{enumerate}
 
-%%%%%%
-\subsection{Optional: Clean up the data}
-\begin{enumerate}[resume*]
-\item Remove the \ttt{timeZone}, \ttt{type}, and \ttt{source} from the \ttt{airport} object
-  \begin{verbatim}
-    map {
-      ($),
-      airport: airports[$.destination][0] - "timeZone" - "type" - "source"
-    }
-  \end{verbatim}
-\item Remove the \ttt{destination} field from each flight
-  \begin{verbatim}
-    map {
-      ($ - "destination"),
-      airport: airports[$.destination][0] - "timeZone" - "type" - "source"
-    }
-  \end{verbatim}
-\end{enumerate}
+%% %%%%%%
+%% \subsection{Optional: Clean up the data}
+%% \begin{enumerate}[resume*]
+%% \item Remove the \ttt{timeZone}, \ttt{type}, and \ttt{source} from the \ttt{airport} object
+%%   \begin{verbatim}
+%%     map {
+%%       ($),
+%%       airport: airports[$.destination][0] - "timeZone" - "type" - "source"
+%%     }
+%%   \end{verbatim}
+%% \item Remove the \ttt{destination} field from each flight
+%%   \begin{verbatim}
+%%     map {
+%%       ($ - "destination"),
+%%       airport: airports[$.destination][0] - "timeZone" - "type" - "source"
+%%     }
+%%   \end{verbatim}
+%% \end{enumerate}
 
 %%
 %%
@@ -645,10 +645,9 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
   \emph{
     We made use of \ttt{map} to iterate the \ttt{ris} and the fact the objects can be accessed by indexes to perform the re-ordering.  Finally, destroyed the array and collapsed the objects in it using the \href{https://docs.mulesoft.com/mule-runtime/4.3/dataweave-types\#dynamic_elements}{Dynamic elements} feature.
   }
+\item Rename \ttt{reorder} to \ttt{reorderMap}
 \item Reorder using \ttt{reduce}
   \begin{verbatim}
-    %dw 2.0
-    output application/dw
     var reorder = (o, ris) -> do {
       var fs = o pluck $$
       ---
@@ -656,8 +655,6 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
         (fs[e]): o[e] 
       }
     }
-    ---
-    payload reorder [8,2,1,7,3,4,7,5,6,0]
   \end{verbatim}
   \emph{
     This solution is superior because there is no need to destroy arrays, collapse objects.  We obtain the final result through a single iteration as compared to two from the previous solution.

@@ -249,7 +249,7 @@ The JSON data structure is enhanced as follows:
   }
 \item Introduce closures (i.e. localized declarations) using \ttt{do \{\}}
   \begin{verbatim}
-    var getTotalSeatsL = pt -> do {
+    var getTotalSeatsL = (pt) -> do {
       var pn = pt[-3 to -1] as Number
       ---
       pn
@@ -263,7 +263,7 @@ The JSON data structure is enhanced as follows:
   }
 \item Add the conditional to the function
   \begin{verbatim}
-    var getTotalSeatsL = pt -> do {
+    var getTotalSeatsL = (pt) -> do {
       var pn = pt[-3 to -1] as Number
       ---
       if (pn == 737 or pn == 707 or pn ==727) 150 else 300
@@ -337,17 +337,17 @@ The JSON data structure is enhanced as follows:
 \item Switch back to the graphical view (aka Message Flow)
 \item Go to the properties of the DW processor under the \ttt{mod2-flights}
 \item Click the Edit current target button (pencil icon)
-\item Click the radio button File and type \ttt{dw/transforms/mod2/functions} in the text field to the right
+\item Click the radio button File and type \ttt{dw/transforms/mod2/flights} in the text field to the right
 \item Click OK
   \emph {
-    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have stored the DW code inside a new file under \ttt{src/main/resources/dw/transforms/mod2} named \ttt{functions.dwl}
+    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have stored the DW code inside a new file under \ttt{src/main/resources/dw/transforms/mod2} named \ttt{flights.dwl}
   }
 \end{enumerate}
 
 %%%%%%
 \subsection{Reuse the DW code from the file}
 \begin{enumerate}[resume*]
-\item Create a new flow named \ttt{mod2-reuse}
+\item Create a new flow named \ttt{mod2-reuse-flights}
 \item Drop a DW to the process area of the flow
 \item Switch to the XML view
 \item Locate the DW you just created
@@ -358,7 +358,7 @@ The JSON data structure is enhanced as follows:
 \item Introduce the \ttt{/} closing to the opening \ttt{<ee:set-payload />} tag, this should automatically remove the explicit closing tag
 \item Add the attribute \ttt{resource} to the \ttt{<ee:set-payload />} tag
   \begin{verbatim}
-    <ee:set-payload resource="dw/transforms/mod2/functions.dwl" />
+    <ee:set-payload resource="dw/transforms/mod2/flights.dwl" />
   \end{verbatim}
   \emph{
     This is the only way you could reuse the full transformation, i.e. by modifying the XML.  Had you gone inside
@@ -366,7 +366,7 @@ The JSON data structure is enhanced as follows:
     only there to store the file not reference it.
   }
 \item Switch back to the graphical view
-\item Open the properties of the the DW processor under the \ttt{mod2-reuse}
+\item Open the properties of the the DW processor under the \ttt{mod2-reuse-flights}
 \item Turn on the Preview
   \emph{
     There is an issue that indicates that there is no metadata identifying what the payload is.  You can fix
@@ -398,7 +398,7 @@ The JSON data structure is enhanced as follows:
   \emph{
     DW modules can only contain declarations.  Declarations such as variables, function, types, etc.
   }
-\item Navigate back to the DW processor under \ttt{mod2-reuse}
+\item Navigate back to the DW processor under \ttt{mod2-reuse-flights}
 \item Copy the \ttt{xes} variable and the \ttt{adjustFor} function
 \item Paste to \ttt{Currency.dwl} under line 1 and save
 \end{enumerate}
@@ -406,7 +406,7 @@ The JSON data structure is enhanced as follows:
 %%%%%%
 \subsection{Use the module}
 \begin{enumerate}[resume*]
-\item Go back to the DW processor under \ttt{mod2-reuse}
+\item Go back to the DW processor under \ttt{mod2-reuse-flights}
 \item Use the module by fully qualifying the function to adjust the price for the CAD currency
   \begin{verbatim}
     payload..*return map {
@@ -620,4 +620,7 @@ The JSON data structure is enhanced as follows:
       totalEmptySeats: payload..*return sumBy $.emptySeats
     },    
   \end{verbatim}
+  \emph{
+    We should be seeing errors now.  These errors are false-positives due to DataSense.  You could potentially eliminate them by adding \ttt{payload..*return default []} to the right of every single \ttt{Array} function.
+  }
 \end{enumerate}
