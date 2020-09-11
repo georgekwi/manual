@@ -17,7 +17,7 @@ The JSON data structure is enhanced as follows:
 \subsection{Create a new flow}
 \begin{enumerate}
 \item Create a new Mule Configuration file and name it \ttt{mod2}, it will contain the solutions to all WTs from module 2.
-\item Create a new flow named \ttt{mod2-functions}
+\item Create a new flow named \ttt{mod2-flights}
 \item Drop a DW to the process area of the flow
 \item Define the payload input metadata to  \ttt{flights\_xml}
 \item Edit the sample data
@@ -333,25 +333,25 @@ The JSON data structure is enhanced as follows:
 \subsection{Store DW code in a file}
 \begin{enumerate}
 \item Switch to the XML view of your file
-\item Navigate under the \lstinline!mod2-functions! flow and illustrate how the code is inline
+\item Navigate under the \ttt{mod2-flights} flow and illustrate how the code is inline
 \item Switch back to the graphical view (aka Message Flow)
-\item Go to the properties of the DW processor under the \lstinline!mod2-functions!
+\item Go to the properties of the DW processor under the \ttt{mod2-flights}
 \item Click the Edit current target button (pencil icon)
-\item Click the radio button File and type \lstinline!dw/transforms/mod2/functions! in the text field to the right
+\item Click the radio button File and type \ttt{dw/transforms/mod2/functions} in the text field to the right
 \item Click OK
   \emph {
-    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have stored the DW code inside a new file under \lstinline!src/main/resources/dw/transforms/mod2! named \lstinline!functions.dwl!
+    From the point of view of the DW properties UI nothing has changed.  Nonetheless, with this action we have stored the DW code inside a new file under \ttt{src/main/resources/dw/transforms/mod2} named \ttt{functions.dwl}
   }
 \end{enumerate}
 
 %%%%%%
 \subsection{Reuse the DW code from the file}
 \begin{enumerate}[resume*]
-\item Create a new flow named \lstinline!mod2-reuse!
+\item Create a new flow named \ttt{mod2-reuse}
 \item Drop a DW to the process area of the flow
 \item Switch to the XML view
 \item Locate the DW you just created
-\item Remove the \lstinline!CDATA! tag
+\item Remove the \ttt{CDATA} tag
   \begin{verbatim}
     <![CDATA[%dw 2.0 output application/java --- {}]]>
   \end{verbatim}
