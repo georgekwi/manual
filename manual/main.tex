@@ -1,0 +1,74 @@
+\documentclass[10pt]{report}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\hypersetup{%
+  colorlinks = true,
+  linkcolor  = black
+}
+\usepackage{fontspec}
+\setmainfont{Carlito}
+%% \usepackage{showframe}
+\usepackage[top=1cm,bottom=1.5cm,left=0.5cm,right=0.5cm]{geometry}
+\usepackage{setspace}
+\singlespacing
+
+
+\renewcommand{\chaptername}{Module}
+\renewcommand{\thesection}{WT~\arabic{chapter}-\arabic{section}}
+
+\usepackage{tocloft}
+\renewcommand\cftsecnumwidth{4em}
+
+\setcounter{secnumdepth}{1} % only chapter and sections will be numbered
+
+\usepackage[T1]{fontenc}%required
+\usepackage{textcomp}
+\usepackage{listings}
+\lstdefinelanguage{dw}{
+  morekeywords={
+    do,or,and,map,mapObject,import,do,sizeOf,typeOf,output,payload,groupBy,
+    ++,--,if,else,true,false,ns,var,contains,fun,case,Array,Object,Null,
+    String,Key,Number,replace,with,Binary,default,distinctBy
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/}
+}
+\lstset{
+  language=dw,
+  upquote=true,
+  columns=fullflexible,
+  literate={*}{{\char42}}1
+           {-}{{\char45}}1
+}
+
+\usepackage{xcolor}
+\newcommand{\yellow}[1]{\colorbox{yellow}{#1}}
+
+%%%
+\newcommand{\ttt}[1]{\texttt{#1}}
+\newcommand{\les}{$\lambda$-expression}
+\newcommand{\lep}{$\lambda$-expressions}
+
+\begin{document}
+
+\title{Dataweave 2.0 Student Manual}
+\date{\today}
+\maketitle
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+%% \listoffigures
+%% \newpage
+\pagenumbering{arabic}
+
+\include{./tex/module1}
+\include{./tex/module2}
+\include{./tex/module3}
+\include{./tex/module4}
+\include{./tex/module5}
+
+\end{document}
