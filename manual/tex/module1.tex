@@ -4,28 +4,12 @@
 %%
 \section{Import a basic Mule project into Anypoint Studio}
 %%%%%%
-\subsection{Import the starter project}
-\begin{enumerate}
-\item Start Anypoint Studio
-\item Create a new workspace
-\item Import the \ttt{apdw2-flights-starter.jar} project under the \ttt{studentFiles/mod01}
-\end{enumerate}
-%%%%%%
 \subsection{Create new project}
-\begin{enumerate}[resume*]
-\item Create a new project
-  \newline
-  \emph{
-    Creating a new project and copying only the files you minimally need for the class helps in containing the ``noise'' that is introduced with the starter project.  Additionally, there is the extra benefit of not having to deal with students who are having compilation issues with the starter project.
-  }
-  \newline
-  \emph{
-    Furthermore, you become familiar with the starter project in case you would like to follow the manual that comes packaged with the class.
-  }
+\begin{enumerate}
 \item Create a new project and call it \ttt{dataweave}
-\item Copy the \ttt{apdw2-flights-starter/src/main/resources/airportInfoTiny.csv} to \ttt{dataweave/src/main/resources}
-\item Copy the \ttt{apdw2-flights-starter/src/main/resources/examples/mockdata/deltaSoapResponsesToAllDestinations.xml} to \ttt{dataweave/src/test/resources}
-\item Copy the \ttt{apdw2-flights-starter/src/test/resources/flight-example.json} to \ttt{dataweave/src/test/resources}
+\item Copy the \ttt{examples/airport-info.csv} to \ttt{dataweave/src/main/resources}
+\item Copy the \ttt{examples/flights-example.xml} to \ttt{dataweave/src/test/resources}
+\item Copy the \ttt{examples/flight-example.json} to \ttt{dataweave/src/test/resources}
 \end{enumerate}
 
 %%
@@ -346,7 +330,7 @@
 \subsection{Transform XML to JSON}
 \begin{enumerate}[resume*]
 \item Create a new flow and name it \ttt{mod1-xml2json}
-\item Set the input payload metadata to \ttt{src/test/resources/deltaSoapResponsesToAllDestinations.xml}, name the new type \ttt{flights\_xml}
+\item Set the input payload metadata to \ttt{src/test/resources/flights-example.xml}, name the new type \ttt{flights\_xml}
 \item Edit the sample data
 \item Turn on the preview
 \item change the output to \ttt{JSON}

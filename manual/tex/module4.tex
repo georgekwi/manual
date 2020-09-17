@@ -140,7 +140,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \subsection{Explore the CSV file}
 \begin{enumerate}
 \item Navigate under \ttt{src/main/resources} folder
-\item Right click the \ttt{airportInfoTiny.csv}
+\item Right click the \ttt{airport-info.csv}
 \item Select \ttt{Open With} and then click \ttt{Text Editor}
 \item Discuss the contents and identify bad data
   \newline
@@ -182,7 +182,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     output application/dw
     ---
     readUrl(
-      "classpath://airportInfoTiny.csv",
+      "classpath://airport-info.csv",
       "application/csv",
       {
         separator: ","
@@ -198,7 +198,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     output application/dw
     ---
     readUrl(
-      "classpath://airportInfoTiny.csv",
+      "classpath://airport-info.csv",
       "application/csv",
       {
         separator: ","
@@ -222,7 +222,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     }
 
     var airports = readUrl(
-      "classpath://airportInfoTiny.csv",
+      "classpath://airport-info.csv",
       "application/csv",
       {
         separator: ","
@@ -437,7 +437,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
     output application/dw
     ---
     readUrl(
-      "classpath://airportInfoTiny.csv",
+      "classpath://airport-info.csv",
       "application/csv",
       {
         separator: ","
@@ -453,7 +453,7 @@ In fact, the remainder of the class makes use of this use-case.  We shall still 
 \item Apply the \ttt{groupBy} function to the \ttt{airports} variable in \ttt{mod4-flights-airports} flow
   \begin{verbatim}
     var airports = readUrl(
-      "classpath://airportInfoTiny.csv",
+      "classpath://airport-info.csv",
       "application/csv",
       {
         separator: ","
