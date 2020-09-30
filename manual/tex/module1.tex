@@ -2,7 +2,7 @@
 %%
 %%
 %%
-\section{Import a basic Mule project into Anypoint Studio}
+\section{Create a new Mule project}
 %%%%%%
 \subsection{Create new project}
 \begin{enumerate}
@@ -105,6 +105,8 @@
   \end{verbatim}
   \emph{
     Here lies the explanation as to why DW objects are stored internally as arrays.  An object containing duplicate field names can only access any of these duplicates fields other than the first through indexes.
+    \newline
+    In the preview you are seeing a single field, this is because the \ttt{output} is set to Java and how Java's HashMaps work; that is HashMap's have unique keys.  If you change the \ttt{output} to JSON you will now see all three fields presented in the preview.
     }
 \item Transform data into XML
   \begin{verbatim}

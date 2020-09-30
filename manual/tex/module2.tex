@@ -621,6 +621,6 @@ The JSON data structure is enhanced as follows:
     },    
   \end{verbatim}
   \emph{
-    We should be seeing errors now.  These errors are false-positives due to DataSense.  You could potentially eliminate them by adding \ttt{payload..*return default []} to the right of every single \ttt{Array} function.
+    We should be seeing errors now.  These errors are false-positives (for the most part) due to DataSense.  You could potentially eliminate them by adding \ttt{payload..*return default []} to the right of every single \ttt{Array} function.  You can drill down by inspecting the signatures for one of the functions that does not raises the error vs the signature with a function that does, to gain more insight. 
   }
 \end{enumerate}

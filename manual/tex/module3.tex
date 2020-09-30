@@ -277,7 +277,7 @@
   }
 \item Use pattern matching to distinguish the empty array, the array that has less than or equal to 100 elements, and the array that has larger than 100 elements
   \begin{verbatim}
-    (0 to 200) match {
+    (0 to 200) as Array match {
       case [] -> "Empty Array" 
       case a if (a is Array and sizeOf(a) <= 100) -> "Non-empty array with less or equal to 100 elements"
       else a -> "Non-empty array with larger than 100 elements"
